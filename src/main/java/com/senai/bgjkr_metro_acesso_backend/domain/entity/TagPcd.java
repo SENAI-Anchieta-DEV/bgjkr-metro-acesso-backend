@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Entity;
@@ -9,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -45,7 +47,8 @@ public class TagPcd {
     @Column(nullable = false, length = 50)
     private String codigoTag;
 
-    @OneToOne(mappedBy = "tag")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", unique = true)
     @JsonBackReference
     private UsuarioPcd usuarioPcd;
 

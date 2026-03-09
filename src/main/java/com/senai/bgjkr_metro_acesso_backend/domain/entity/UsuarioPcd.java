@@ -29,8 +29,7 @@ public class UsuarioPcd extends Usuario {
     @Column(nullable = false)
     private boolean desejaSuporte;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tag_id")
+    @OneToOne(mappedBy = "user")
     @JsonManagedReference
     private TagPcd tag;
 }
