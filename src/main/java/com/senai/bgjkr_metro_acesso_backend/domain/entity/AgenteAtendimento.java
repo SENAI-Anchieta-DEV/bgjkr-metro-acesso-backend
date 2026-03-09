@@ -1,4 +1,33 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
-public class AgenteAtendimento {
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalTime;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class AgenteAtendimento extends Usuario {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estacao_id", nullable = false)
+    private Estacao estacao;
+
+    @Column(nullable = false)
+    private LocalTime inicioTurno;
+
+    @Column(nullable = false)
+    private LocalTime fimTurno;
 }
