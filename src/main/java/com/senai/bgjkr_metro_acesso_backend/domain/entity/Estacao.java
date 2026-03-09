@@ -10,6 +10,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -28,12 +29,20 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "estacoes")
+@Table(
+        name = "estacoes",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "nome")
+        }
+)
 public class Estacao {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
     private UUID id;
+
+    @Column(nullable = false, length = 120)
+    private String nome;
 
     @OneToMany(mappedBy = "estacao")
     private List<AgenteAtendimento> agentes;
