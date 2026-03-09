@@ -1,7 +1,5 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

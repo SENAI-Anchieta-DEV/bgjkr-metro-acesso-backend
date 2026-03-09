@@ -1,8 +1,5 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Entity;
