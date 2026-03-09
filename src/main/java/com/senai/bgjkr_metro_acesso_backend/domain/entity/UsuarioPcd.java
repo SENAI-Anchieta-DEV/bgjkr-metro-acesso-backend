@@ -29,7 +29,6 @@ public class UsuarioPcd extends Usuario {
     @Column(nullable = false)
     private boolean desejaSuporte;
 
-    @OneToOne(mappedBy = "user")
-    @JsonManagedReference
+    @OneToOne(mappedBy = "usuario_pcd")
     private TagPcd tag;
 }

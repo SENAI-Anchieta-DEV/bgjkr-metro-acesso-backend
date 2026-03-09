@@ -47,9 +47,8 @@ public class TagPcd {
     @Column(nullable = false, length = 50)
     private String codigoTag;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", unique = true)
-    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "usuario_pcd_id", unique = true)
     private UsuarioPcd usuarioPcd;
 
     @Column(nullable = false)
