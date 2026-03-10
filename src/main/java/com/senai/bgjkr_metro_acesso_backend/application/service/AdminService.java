@@ -48,6 +48,18 @@ public class AdminService {
         return AdminResponseDto.fromEntity(procurarAdminAtivo(email));
     }
 
+    // UPDATE
+    @Transactional
+    public AdminResponseDto atualizarAdmin(String email, AdminRequestDto requestDto) {
+        Administrador adminAtualizado = procurarAdminAtivo(email);
+
+        adminAtualizado.setNome(requestDto.nome());
+        adminAtualizado.setEmail(requestDto.email());
+        adminAtualizado.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
+
+        return AdminResponseDto.fromEntity(repository.save(adminAtualizado));
+    }
+
     // Funções auxiliares
     private Administrador reativarAdmin(Administrador admin, AdminRequestDto dto) {
         admin.setAtivo(true);
