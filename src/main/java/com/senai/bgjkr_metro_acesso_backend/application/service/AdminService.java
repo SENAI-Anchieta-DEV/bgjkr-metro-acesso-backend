@@ -60,6 +60,15 @@ public class AdminService {
         return AdminResponseDto.fromEntity(repository.save(adminAtualizado));
     }
 
+    @Transactional
+    public void removerAdmin(String email) {
+        Administrador adminRemovido = procurarAdminAtivo(email);
+
+        adminRemovido.setAtivo(false);
+
+        repository.save(adminRemovido);
+    }
+
     // Funções auxiliares
     private Administrador reativarAdmin(Administrador admin, AdminRequestDto dto) {
         admin.setAtivo(true);

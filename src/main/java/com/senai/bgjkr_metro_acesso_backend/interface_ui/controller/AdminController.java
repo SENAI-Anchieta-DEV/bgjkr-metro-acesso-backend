@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminR
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,5 +42,11 @@ public class AdminController {
     @PutMapping("/{email}")
     public AdminResponseDto atualizarAdmin(@PathVariable String email, @RequestBody AdminRequestDto requestDto) {
         return service.atualizarAdmin(email, requestDto);
+    }
+
+    // DELETE
+    @DeleteMapping("/{email}")
+    public void removerAdmin(@PathVariable String email) {
+        service.removerAdmin(email);
     }
 }
