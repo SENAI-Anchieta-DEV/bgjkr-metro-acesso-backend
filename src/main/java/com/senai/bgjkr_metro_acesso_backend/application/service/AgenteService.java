@@ -42,6 +42,16 @@ public class AgenteService {
         return AgenteResponseDto.fromEntity(procurarAgenteAtivo(email));
     }
 
+    // UPDATE
+    @Transactional
+    public AgenteResponseDto atualizarAgente(String email, AgenteRequestDto requestDto) {
+        AgenteAtendimento agenteAtualizado = procurarAgenteAtivo(email);
+
+        atualizarValores(agenteAtualizado, requestDto);
+
+        return AgenteResponseDto.fromEntity(repository.save(agenteAtualizado));
+    }
+
     // Funções auxiliares
     private void atualizarValores(AgenteAtendimento agente, AgenteRequestDto requestDto) {
         agente.setNome(requestDto.nome());
