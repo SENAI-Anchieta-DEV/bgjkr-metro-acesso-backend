@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.A
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AgenteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,5 +42,11 @@ public class AgenteController {
     @PutMapping("/{email}")
     public AgenteResponseDto atualizarAgente(@PathVariable String email, @RequestBody AgenteRequestDto requestDto) {
         return service.atualizarAgente(email, requestDto);
+    }
+
+    // DELETE
+    @DeleteMapping("/{email}")
+    public void removerAgente(@PathVariable String email) {
+        service.removerAgente(email);
     }
 }

@@ -52,6 +52,16 @@ public class AgenteService {
         return AgenteResponseDto.fromEntity(repository.save(agenteAtualizado));
     }
 
+    // DELETE
+    @Transactional
+    public void removerAgente(String email) {
+        AgenteAtendimento agenteRemovido = procurarAgenteAtivo(email);
+
+        agenteRemovido.setAtivo(false);
+
+        repository.save(agenteRemovido);
+    }
+
     // Funções auxiliares
     private void atualizarValores(AgenteAtendimento agente, AgenteRequestDto requestDto) {
         agente.setNome(requestDto.nome());
