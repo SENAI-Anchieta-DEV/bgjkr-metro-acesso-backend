@@ -19,16 +19,8 @@ public class AdminService {
     @Transactional
     public AdminResponseDto registrarAdmin(AdminRequestDto requestDto) {
         Administrador adminRegistrado = repository.findByEmail(requestDto.email())
-                .map(admin ->
-                        admin.isAtivo() ? admin : reativarAdmin(admin, requestDto)
-                )
-                .orElseGet(() ->
-                        {
-                            Administrador admin = requestDto.toEntity();
-                            admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-                            return admin;
-                        }
-                );
+                .map(admin -> admin.isAtivo() ? admin : reativarAdmin(admin, requestDto))
+                .orElseGet(() -> criarAdmin(requestDto));
 
         return AdminResponseDto.fromEntity(repository.save(adminRegistrado));
     }
@@ -83,5 +75,11 @@ public class AdminService {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
+    private Administrador criarAdmin(AdminRequestDto requestDto) {
+        Administrador admin = requestDto.toEntity();
+        admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
+        return admin;
     }
 }
