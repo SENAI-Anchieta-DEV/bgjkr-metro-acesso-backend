@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AgenteService {
@@ -23,6 +25,21 @@ public class AgenteService {
                 .orElseGet(() -> criarAgente(requestDto));
 
         return AgenteResponseDto.fromEntity(repository.save(agenteRegistrado));
+    }
+
+    // READ
+    @Transactional(readOnly = true)
+    public List<AgenteResponseDto> listarAgentesAtivos() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(AgenteResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public AgenteResponseDto buscarAgenteAtivo(String email) {
+        return AgenteResponseDto.fromEntity(procurarAgenteAtivo(email));
     }
 
     // Funções auxiliares
