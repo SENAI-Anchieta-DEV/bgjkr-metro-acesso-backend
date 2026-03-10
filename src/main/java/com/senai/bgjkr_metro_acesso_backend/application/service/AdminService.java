@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -31,6 +33,21 @@ public class AdminService {
         return AdminResponseDto.fromEntity(repository.save(adminRegistrado));
     }
 
+    // READ
+    @Transactional(readOnly = true)
+    public List<AdminResponseDto> listarAdminsAtivos() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(AdminResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public AdminResponseDto buscarAdminAtivo(String email) {
+        return AdminResponseDto.fromEntity(procurarAdminAtivo(email));
+    }
+
     // Funções auxiliares
     private Administrador reativarAdmin(Administrador admin, AdminRequestDto dto) {
         admin.setAtivo(true);
@@ -39,5 +56,11 @@ public class AdminService {
         admin.setSenha(dto.senha()); // Criptografia de senha em futura feature
 
         return admin;
+    }
+
+    private Administrador procurarAdminAtivo(String email) {
+        return repository
+                .findByEmailAndAtivoTrue(email)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 }
