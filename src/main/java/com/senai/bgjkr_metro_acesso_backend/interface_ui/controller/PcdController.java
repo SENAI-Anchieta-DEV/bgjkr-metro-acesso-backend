@@ -37,7 +37,11 @@ public class PcdController {
         return service.atualizarPcd(email, requestDto);
     }
 
-
+    // DELETE
+    @DeleteMapping("/{email}")
+    public void removerPcd(@PathVariable String email) {
+        service.removerPcd(email);
+    }
 
 }
 

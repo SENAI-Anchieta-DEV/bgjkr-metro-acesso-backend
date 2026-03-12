@@ -53,6 +53,17 @@ public class PcdService {
         return PcdResponseDto.fromEntity(repository.save(pcdAtualizado));
     }
 
+    // DELETE
+    @Transactional
+    public void removerPcd(String email) {
+        UsuarioPcd pcdRemovido = procurarPcdAtivo(email);
+
+        pcdRemovido.setAtivo(false);
+
+        repository.save(pcdRemovido);
+    }
+
+
     // Funções auxiliares
     private void atualizarValores(UsuarioPcd pcd, PcdRequestDto requestDto) {
         pcd.setNome(requestDto.nome());
