@@ -4,10 +4,9 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdReque
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.PcdService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/pcd")
@@ -20,5 +19,17 @@ public class PcdController {
     public PcdResponseDto registrarPcd(@RequestBody PcdRequestDto requestDto) {
         return service.registrarPcd(requestDto);
     }
+
+    // READ
+    @GetMapping
+    public List<PcdResponseDto> listarPcdsAtivos() {
+        return service.listarPcdsAtivos();
+    }
+
+    @GetMapping("/{email}")
+    public PcdResponseDto buscarPcdAtivo(@PathVariable String email) {
+        return service.buscarPcdAtivo(email);
+    }
+
 }
 

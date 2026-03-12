@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 
@@ -24,6 +26,21 @@ public class PcdService {
                 .orElseGet(() -> criarPcd(requestDto));
         
         return PcdResponseDto.fromEntity(repository.save(pcdRegistrado));
+    }
+
+    // READ
+    @Transactional(readOnly = true)
+    public List<PcdResponseDto> listarPcdsAtivos() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(PcdResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PcdResponseDto buscarPcdAtivo(String email) {
+        return PcdResponseDto.fromEntity(procurarPcdAtivo(email));
     }
 
     // Funções auxiliares
