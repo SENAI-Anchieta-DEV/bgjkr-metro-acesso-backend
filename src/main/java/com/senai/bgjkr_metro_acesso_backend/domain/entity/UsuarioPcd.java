@@ -1,11 +1,7 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +23,7 @@ public class UsuarioPcd extends Usuario {
     @Column(nullable = false)
     private boolean desejaSuporte;
 
-    @OneToOne(mappedBy = "usuarioPcd")
+    @OneToOne(optional = false)
+    @JoinColumn(name = "tag_id", nullable = false, unique = true)
     private TagPcd tag;
 }
