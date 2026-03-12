@@ -43,6 +43,16 @@ public class PcdService {
         return PcdResponseDto.fromEntity(procurarPcdAtivo(email));
     }
 
+    // UPDATE
+    @Transactional
+    public PcdResponseDto atualizarPcd(String email, PcdRequestDto requestDto) {
+        UsuarioPcd pcdAtualizado = procurarPcdAtivo(email);
+
+        atualizarValores(pcdAtualizado, requestDto);
+
+        return PcdResponseDto.fromEntity(repository.save(pcdAtualizado));
+    }
+
     // Funções auxiliares
     private void atualizarValores(UsuarioPcd pcd, PcdRequestDto requestDto) {
         pcd.setNome(requestDto.nome());

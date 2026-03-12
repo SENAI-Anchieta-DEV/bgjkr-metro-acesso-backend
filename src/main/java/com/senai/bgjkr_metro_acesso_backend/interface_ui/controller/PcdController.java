@@ -31,5 +31,13 @@ public class PcdController {
         return service.buscarPcdAtivo(email);
     }
 
+    // UPDATE
+    @PutMapping("/{email}")
+    public PcdResponseDto atualizarPcd(@PathVariable String email, @RequestBody PcdRequestDto requestDto) {
+        return service.atualizarPcd(email, requestDto);
+    }
+
+
+
 }
 
