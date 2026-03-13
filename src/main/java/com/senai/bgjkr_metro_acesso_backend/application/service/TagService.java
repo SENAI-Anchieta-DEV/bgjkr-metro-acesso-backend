@@ -51,6 +51,16 @@ public class TagService {
         return TagResponseDto.fromEntity(repository.save(tagAtualizada));
     }
 
+    // DELETE
+    @Transactional
+    public void removerTag(String codigoTag) {
+        TagPcd tagRemovida = procurarTagAtiva(codigoTag);
+
+        tagRemovida.setAtivo(false);
+
+        repository.save(tagRemovida);
+    }
+
     // Funções auxiliares
     private TagPcd reativarTag(TagPcd tag, TagRequestDto requestDto) {
         atualizarValores(tag, requestDto);

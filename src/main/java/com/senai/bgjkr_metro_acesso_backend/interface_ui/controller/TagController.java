@@ -31,8 +31,15 @@ public class TagController {
     }
 
     // UPDATE
+    @PutMapping("/{codigoTag}")
     public TagResponseDto atualizarTag(@PathVariable String codigoTag, @RequestBody TagRequestDto requestDto) {
         return service.atualizarTag(codigoTag, requestDto);
+    }
+
+    // DELETE
+    @DeleteMapping("/{codigoTag}")
+    public void removerTag(@PathVariable String codigoTag) {
+        service.removerTag(codigoTag);
     }
 }
 
