@@ -30,5 +30,9 @@ public class TagController {
         return service.buscarTagAtiva(codigoTag);
     }
 
+    // UPDATE
+    public TagResponseDto atualizarTag(@PathVariable String codigoTag, @RequestBody TagRequestDto requestDto) {
+        return service.atualizarTag(codigoTag, requestDto);
+    }
 }
 

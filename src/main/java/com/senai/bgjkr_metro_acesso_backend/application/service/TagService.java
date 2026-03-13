@@ -25,6 +25,7 @@ public class TagService {
 
         return TagResponseDto.fromEntity(repository.save(tagRegistrado));
     }
+
     // READ
     @Transactional(readOnly = true)
     public List<TagResponseDto> listarTagsAtivas() {
@@ -40,6 +41,15 @@ public class TagService {
         return TagResponseDto.fromEntity(procurarTagAtiva(codigoTag));
     }
 
+    // UPDATE
+    @Transactional
+    public TagResponseDto atualizarTag(String codigoTag, TagRequestDto requestDto) {
+        TagPcd tagAtualizada = procurarTagAtiva(codigoTag);
+
+        atualizarValores(tagAtualizada, requestDto);
+
+        return TagResponseDto.fromEntity(repository.save(tagAtualizada));
+    }
 
     // Funções auxiliares
     private TagPcd reativarTag(TagPcd tag, TagRequestDto requestDto) {
