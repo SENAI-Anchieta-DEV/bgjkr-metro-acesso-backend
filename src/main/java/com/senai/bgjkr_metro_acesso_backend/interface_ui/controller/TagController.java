@@ -14,10 +14,11 @@ import java.util.List;
 public class TagController {
     private final TagService service;
 
+   // CREATE
     @PostMapping
     public TagResponseDto registrarTag(@RequestBody TagRequestDto requestDto) {
         return service.registrarTag(requestDto);
-}
+    }
 
     // READ
     @GetMapping
