@@ -12,11 +12,22 @@ import java.util.List;
 @RequestMapping("/api/tag")
 @RequiredArgsConstructor
 public class TagController {
-}
     private final TagService service;
 
     @PostMapping
     public TagResponseDto registrarTag(@RequestBody TagRequestDto requestDto) {
         return service.registrarTag(requestDto);
+}
+
+    // READ
+    @GetMapping
+    public List<TagResponseDto> listarTagsAtivas() {
+        return service.listarTagsAtivas();
+    }
+    @GetMapping("/{codigoTag}")
+    public TagResponseDto buscarTagAtiva(@PathVariable String codigoTag) {
+        return service.buscarTagAtiva(codigoTag);
+    }
+
 }
 

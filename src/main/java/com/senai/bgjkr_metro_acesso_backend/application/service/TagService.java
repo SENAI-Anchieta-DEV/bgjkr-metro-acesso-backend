@@ -25,4 +25,40 @@ public class TagService {
 
         return TagResponseDto.fromEntity(repository.save(tagRegistrado));
     }
+    // READ
+    @Transactional(readOnly = true)
+    public List<TagResponseDto> listarTagsAtivas() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(TagResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public TagResponseDto buscarTagAtiva(String codigoTag) {
+        return TagResponseDto.fromEntity(procurarTagAtiva(codigoTag));
+    }
+
+
+    // Funções auxiliares
+    private TagPcd reativarTag(TagPcd tag, TagRequestDto requestDto) {
+        atualizarValores(tag, requestDto);
+        tag.setAtivo(true);
+        return tag;
+    }
+
+    private TagPcd criarTag(TagRequestDto requestDto) {
+        return requestDto.toEntity();
+    }
+
+    protected TagPcd procurarTagAtiva(String codigoTag) {
+        return repository
+                .findByCodigoTagAndAtivoTrue(codigoTag)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
+    private void atualizarValores(TagPcd tag, TagRequestDto requestDto) {
+        tag.setCodigoTag(requestDto.codigoTag());
+    }
 }
