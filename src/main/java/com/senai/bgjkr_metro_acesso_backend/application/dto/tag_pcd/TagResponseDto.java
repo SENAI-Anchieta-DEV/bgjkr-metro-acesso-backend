@@ -1,12 +1,22 @@
 package com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd;
 
-import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdSummaryResponseDto;
-
-import java.util.UUID;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdSummaryDto;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 
 public record TagResponseDto(
-        UUID id,
+        String id,
         String codigoTag,
-        PcdSummaryResponseDto usuarioPcd
+        PcdSummaryDto usuarioPcd
 ) {
+    public static TagResponseDto fromEntity(
+            TagPcd tagPcd
+    ) {
+        return new TagResponseDto(
+                tagPcd.getId(),
+                tagPcd.getCodigoTag(),
+                tagPcd.getUsuarioPcd() == null ?
+                        new PcdSummaryDto(null, "Usuário não associado", null, null, null) :
+                        PcdSummaryDto.fromEntity(tagPcd.getUsuarioPcd())
+        );
+    }
 }
