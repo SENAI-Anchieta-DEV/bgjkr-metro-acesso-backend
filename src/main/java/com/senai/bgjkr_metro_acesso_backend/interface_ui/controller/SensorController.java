@@ -44,3 +44,10 @@ public class SensorController {
         return service.atualizarSensor(codigoSensor, requestDto);
     }
 
+    // DELETE
+    @DeleteMapping("/{codigoSensor}")
+    public void removerSensor(@PathVariable String codigoSensor) {
+        service.removerSensor(codigoSensor);
+    }
+}
+

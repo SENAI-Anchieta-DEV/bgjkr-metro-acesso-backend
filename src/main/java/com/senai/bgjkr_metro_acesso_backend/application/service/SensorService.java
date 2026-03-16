@@ -53,3 +53,13 @@ public class SensorService {
         return SensorResponseDto.fromEntity(repository.save(sensorAtualizado));
     }
 
+    // DELETE
+    @Transactional
+    public void removerSensor(String codigoSensor) {
+        Sensor sensorRemovido = procurarSensorAtivo(codigoSensor);
+
+        sensorRemovido.setAtivo(false);
+
+        repository.save(sensorRemovido);
+    }
+
