@@ -1,16 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,16 +19,27 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "sensores")
+@Table(
+        name = "sensores",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "codigoSensor")
+        }
+)
 public class Sensor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
-    private UUID id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estacao_id", nullable = false)
     private Estacao estacao;
+
+    @Column(nullable = false, length = 50)
+    private String codigoSensor;
+
+    @Column
+    private String porta;
 
     @Column(nullable = false)
     private boolean ativo;

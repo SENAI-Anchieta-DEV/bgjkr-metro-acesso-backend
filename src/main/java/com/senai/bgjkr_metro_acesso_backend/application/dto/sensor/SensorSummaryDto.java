@@ -2,20 +2,18 @@ package com.senai.bgjkr_metro_acesso_backend.application.dto.sensor;
 
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 
-public record SensorResponseDto(
+public record SensorSummaryDto(
         String id,
         String porta,
-        String codigoSensor,
-        EstacaoSummaryDto estacao
+        String codigoSensor
 ) {
-    public static SensorResponseDto fromEntity(
+    public static SensorSummaryDto fromEntity(
             Sensor sensor
     ) {
-        return new SensorResponseDto(
+        return new SensorSummaryDto(
                 sensor.getId(),
                 sensor.getPorta(),
-                sensor.getCodigoSensor(),
-                EstacaoSummaryDto.fromEntity(sensor.getEstacao())
+                sensor.getCodigoSensor()
         );
     }
 }
