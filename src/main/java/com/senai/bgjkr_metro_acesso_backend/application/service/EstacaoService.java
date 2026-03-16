@@ -49,4 +49,34 @@ public class EstacaoService {
         return EstacaoResponseDto.fromEntity(repository.save(estacaoAtualizada));
     }
 
+    // DELETE
+    @Transactional
+    public void removerEstacao(String codigoEstacao) {
+        Estacao estacaoRemovida = procurarEstacaoAtiva(codigoEstacao);
+        estacaoRemovida.setAtivo(false);
+        repository.save(estacaoRemovida);
+    }
+
+    // Funções auxiliares
+    private Estacao reativarEstacao(Estacao estacao, EstacaoRequestDto requestDto) {
+        atualizarValores(estacao, requestDto);
+        estacao.setAtivo(true);
+        return estacao;
+    }
+
+    private Estacao criarEstacao(EstacaoRequestDto requestDto) {
+        return requestDto.toEntity();
+    }
+
+    protected Estacao procurarEstacaoAtiva(String codigoEstacao) {
+        return repository
+                .findByCodigoEstacaoAndAtivoTrue(codigoEstacao)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
+    private void atualizarValores(Estacao estacao, EstacaoRequestDto requestDto) {
+        estacao.setNome(requestDto.nome());
+        estacao.setCodigoEstacao(requestDto.codigoEstacao());
+        estacao.setLinhas(Linha.fromNumeros(requestDto.linhas()));
+    }
 }

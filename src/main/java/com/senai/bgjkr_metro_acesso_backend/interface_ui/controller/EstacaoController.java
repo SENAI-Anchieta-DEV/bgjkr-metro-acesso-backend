@@ -44,4 +44,9 @@ public class EstacaoController {
         return service.atualizarEstacao(id, requestDto);
     }
 
+    // DELETE
+    @DeleteMapping("/{id}")
+    public void removerEstacao(@PathVariable String id) {
+        service.removerEstacao(id);
+    }
 }
