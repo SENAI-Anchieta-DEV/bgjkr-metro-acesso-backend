@@ -38,3 +38,9 @@ public class SensorController {
         return service.buscarSensorAtivo(codigoSensor);
     }
 
+    // UPDATE
+    @PutMapping("/{codigoSensor}")
+    public SensorResponseDto atualizarSensor(@PathVariable String codigoSensor, @RequestBody SensorRequestDto requestDto) {
+        return service.atualizarSensor(codigoSensor, requestDto);
+    }
+

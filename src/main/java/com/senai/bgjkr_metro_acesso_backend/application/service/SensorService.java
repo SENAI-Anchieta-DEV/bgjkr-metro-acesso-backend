@@ -43,3 +43,13 @@ public class SensorService {
         return SensorResponseDto.fromEntity(procurarSensorAtivo(codigoSensor));
     }
 
+    // UPDATE
+    @Transactional
+    public SensorResponseDto atualizarSensor(String codigoSensor, SensorRequestDto requestDto) {
+        Sensor sensorAtualizado = procurarSensorAtivo(codigoSensor);
+
+        atualizarValores(sensorAtualizado, requestDto);
+
+        return SensorResponseDto.fromEntity(repository.save(sensorAtualizado));
+    }
+
