@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.SensorRepository;
@@ -14,7 +15,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SensorService {
-}
     private final SensorRepository repository;
     private final EstacaoService estacaoService;
 
@@ -26,5 +26,20 @@ public class SensorService {
                 .orElseGet(() -> criarSensor(requestDto));
 
         return SensorResponseDto.fromEntity(repository.save(sensorRegistrado));
+    }
+
+    // READ
+    @Transactional(readOnly = true)
+    public List<SensorResponseDto> listarSensorsAtivos() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(SensorResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public SensorResponseDto buscarSensorAtivo(String codigoSensor) {
+        return SensorResponseDto.fromEntity(procurarSensorAtivo(codigoSensor));
     }
 
