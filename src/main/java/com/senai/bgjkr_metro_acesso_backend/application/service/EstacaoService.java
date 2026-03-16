@@ -41,4 +41,12 @@ public class EstacaoService {
         return EstacaoResponseDto.fromEntity(procurarEstacaoAtiva(codigoEstacao));
     }
 
+    // UPDATE
+    @Transactional
+    public EstacaoResponseDto atualizarEstacao(String codigoEstacao, EstacaoRequestDto requestDto) {
+        Estacao estacaoAtualizada = procurarEstacaoAtiva(codigoEstacao);
+        atualizarValores(estacaoAtualizada, requestDto);
+        return EstacaoResponseDto.fromEntity(repository.save(estacaoAtualizada));
+    }
+
 }

@@ -37,4 +37,11 @@ public class EstacaoController {
     public EstacaoResponseDto buscarEstacaoAtiva(@PathVariable String id) {
         return service.buscarEstacaoAtiva(id);
     }
+
+    // UPDATE
+    @PutMapping("/{id}")
+    public EstacaoResponseDto atualizarEstacao(@PathVariable String id, @RequestBody EstacaoRequestDto requestDto) {
+        return service.atualizarEstacao(id, requestDto);
+    }
+
 }
