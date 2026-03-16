@@ -63,3 +63,31 @@ public class SensorService {
         repository.save(sensorRemovido);
     }
 
+    // Funções auxiliares
+    private void atualizarValores(Sensor sensor, SensorRequestDto requestDto) {
+        sensor.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.estacaoId()));
+        sensor.setCodigoSensor(requestDto.codigoSensor());
+        sensor.setPorta(requestDto.porta());
+    }
+
+    private Sensor reativarSensor(Sensor sensor, SensorRequestDto requestDto) {
+        atualizarValores(sensor, requestDto);
+
+        sensor.setAtivo(true);
+
+        return sensor;
+    }
+
+    private Sensor procurarSensorAtivo(String codigoSensor) {
+        return repository
+                .findByCodigoSensorAndAtivoTrue(codigoSensor)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
+    private Sensor criarSensor(SensorRequestDto requestDto) {
+        Estacao estacao = estacaoService.procurarEstacaoAtiva(requestDto.estacaoId());
+        Sensor sensor = requestDto.toEntity(estacao);
+        return sensor;
+    }
+}
+
