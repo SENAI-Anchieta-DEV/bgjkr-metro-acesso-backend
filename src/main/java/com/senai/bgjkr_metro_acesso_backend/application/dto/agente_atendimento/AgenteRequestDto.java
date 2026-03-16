@@ -12,7 +12,7 @@ public record AgenteRequestDto(
         String senha,
         LocalTime inicioTurno,
         LocalTime fimTurno,
-        String estacaoId
+        String codigoEstacao
 ) {
     public AgenteAtendimento toEntity(
             Estacao estacao

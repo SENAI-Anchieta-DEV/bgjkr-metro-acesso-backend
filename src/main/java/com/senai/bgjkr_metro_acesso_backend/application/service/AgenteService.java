@@ -67,7 +67,7 @@ public class AgenteService {
         agente.setNome(requestDto.nome());
         agente.setEmail(requestDto.email());
         agente.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-        agente.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.estacaoId()));
+        agente.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
         agente.setInicioTurno(requestDto.inicioTurno());
         agente.setFimTurno(requestDto.fimTurno());
     }
@@ -87,7 +87,7 @@ public class AgenteService {
     }
 
     private AgenteAtendimento criarAgente(AgenteRequestDto requestDto) {
-        Estacao estacao = estacaoService.procurarEstacaoAtiva(requestDto.estacaoId());
+        Estacao estacao = estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao());
         AgenteAtendimento agente = requestDto.toEntity(estacao);
         agente.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
         return agente;

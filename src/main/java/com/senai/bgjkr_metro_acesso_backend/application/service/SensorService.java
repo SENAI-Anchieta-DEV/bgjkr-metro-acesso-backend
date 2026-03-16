@@ -2,9 +2,8 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorResponseDto;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,7 +64,7 @@ public class SensorService {
 
     // Funções auxiliares
     private void atualizarValores(Sensor sensor, SensorRequestDto requestDto) {
-        sensor.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.estacaoId()));
+        sensor.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
         sensor.setCodigoSensor(requestDto.codigoSensor());
         sensor.setPorta(requestDto.porta());
     }
@@ -85,9 +84,8 @@ public class SensorService {
     }
 
     private Sensor criarSensor(SensorRequestDto requestDto) {
-        Estacao estacao = estacaoService.procurarEstacaoAtiva(requestDto.estacaoId());
-        Sensor sensor = requestDto.toEntity(estacao);
-        return sensor;
+        Estacao estacao = estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao());
+        return requestDto.toEntity(estacao);
     }
 }
 

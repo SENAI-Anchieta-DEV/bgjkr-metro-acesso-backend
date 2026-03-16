@@ -4,7 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 
 public record SensorRequestDto(
-        String estacaoId,
+        String codigoEstacao,
         String porta,
         String codigoSensor
 ) {
