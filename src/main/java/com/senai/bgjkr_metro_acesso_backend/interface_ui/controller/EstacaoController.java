@@ -26,4 +26,15 @@ public class EstacaoController {
     public EstacaoResponseDto registrarEstacao(@RequestBody EstacaoRequestDto requestDto) {
         return service.registrarEstacao(requestDto);
     }
+
+    // READ
+    @GetMapping
+    public List<EstacaoResponseDto> listarEstacoesAtivas() {
+        return service.listarEstacoesAtivas();
+    }
+
+    @GetMapping("/{id}")
+    public EstacaoResponseDto buscarEstacaoAtiva(@PathVariable String id) {
+        return service.buscarEstacaoAtiva(id);
+    }
 }

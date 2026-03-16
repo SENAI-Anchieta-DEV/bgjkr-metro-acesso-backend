@@ -25,4 +25,20 @@ public class EstacaoService {
 
         return EstacaoResponseDto.fromEntity(repository.save(estacaoRegistrada));
     }
+
+    // READ
+    @Transactional(readOnly = true)
+    public List<EstacaoResponseDto> listarEstacoesAtivas() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(EstacaoResponseDto::fromEntity)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public EstacaoResponseDto buscarEstacaoAtiva(String codigoEstacao) {
+        return EstacaoResponseDto.fromEntity(procurarEstacaoAtiva(codigoEstacao));
+    }
+
 }
