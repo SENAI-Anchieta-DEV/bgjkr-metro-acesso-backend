@@ -24,7 +24,7 @@ public class PcdService {
         UsuarioPcd pcdRegistrado = repository.findByEmail(requestDto.email())
                 .map(pcd -> pcd.isAtivo() ? pcd : reativarPcd(pcd, requestDto))
                 .orElseGet(() -> criarPcd(requestDto));
-        
+
         return PcdResponseDto.fromEntity(repository.save(pcdRegistrado));
     }
 
@@ -62,7 +62,6 @@ public class PcdService {
 
         repository.save(pcdRemovido);
     }
-
 
     // Funções auxiliares
     private void atualizarValores(UsuarioPcd pcd, PcdRequestDto requestDto) {

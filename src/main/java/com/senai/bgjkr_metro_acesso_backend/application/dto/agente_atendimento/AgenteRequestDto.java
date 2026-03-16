@@ -4,7 +4,9 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Role;
 
-import java.time.LocalTime;public record AgenteRequestDto(
+import java.time.LocalTime;
+
+public record AgenteRequestDto(
         String nome,
         String email,
         String senha,
