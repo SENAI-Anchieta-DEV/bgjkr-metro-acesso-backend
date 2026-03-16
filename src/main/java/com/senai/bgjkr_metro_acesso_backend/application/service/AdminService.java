@@ -44,31 +44,29 @@ public class AdminService {
     @Transactional
     public AdminResponseDto atualizarAdmin(String email, AdminRequestDto requestDto) {
         Administrador adminAtualizado = procurarAdminAtivo(email);
-
-        adminAtualizado.setNome(requestDto.nome());
-        adminAtualizado.setEmail(requestDto.email());
-        adminAtualizado.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-
+        atualizarValores(adminAtualizado, requestDto);
         return AdminResponseDto.fromEntity(repository.save(adminAtualizado));
     }
 
+    // DELETE
     @Transactional
     public void removerAdmin(String email) {
         Administrador adminRemovido = procurarAdminAtivo(email);
-
         adminRemovido.setAtivo(false);
-
         repository.save(adminRemovido);
     }
 
     // Funções auxiliares
-    private Administrador reativarAdmin(Administrador admin, AdminRequestDto dto) {
+    private Administrador reativarAdmin(Administrador admin, AdminRequestDto requestDto) {
         admin.setAtivo(true);
-        admin.setNome(dto.nome());
-        admin.setEmail(dto.email());
-        admin.setSenha(dto.senha()); // Criptografia de senha em futura feature
-
+        atualizarValores(admin, requestDto);
         return admin;
+    }
+
+    private void atualizarValores(Administrador admin, AdminRequestDto requestDto) {
+        admin.setNome(requestDto.nome());
+        admin.setEmail(requestDto.email());
+        admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
     }
 
     private Administrador procurarAdminAtivo(String email) {
