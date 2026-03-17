@@ -15,7 +15,7 @@ public record TagResponseDto(
                 tagPcd.getId(),
                 tagPcd.getCodigoTag(),
                 tagPcd.getUsuarioPcd() == null ?
-                        new PcdSummaryDto(null, "Usuário não associado", null, null, null) :
+                        null :
                         PcdSummaryDto.fromEntity(tagPcd.getUsuarioPcd())
         );
     }

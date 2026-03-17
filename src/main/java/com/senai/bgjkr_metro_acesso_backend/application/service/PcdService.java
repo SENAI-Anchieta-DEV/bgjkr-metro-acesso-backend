@@ -57,6 +57,12 @@ public class PcdService {
         UsuarioPcd pcdRemovido = procurarPcdAtivo(email);
         pcdRemovido.setAtivo(false);
 
+        TagPcd tagVinculada = pcdRemovido.getTag();
+        if (tagVinculada != null) {
+            tagVinculada.setUsuarioPcd(null);
+            pcdRemovido.setTag(null);
+        }
+
         repository.save(pcdRemovido);
     }
 
