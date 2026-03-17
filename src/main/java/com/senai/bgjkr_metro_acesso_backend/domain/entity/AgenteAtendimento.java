@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,9 +20,10 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Table(name = "agentes_atendimento")
 public class AgenteAtendimento extends Usuario {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estacao_id", nullable = false)
+    @JoinColumn(name = "estacao_id")
     private Estacao estacao;
 
     @Column(nullable = false)
