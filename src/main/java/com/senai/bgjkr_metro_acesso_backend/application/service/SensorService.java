@@ -56,6 +56,12 @@ public class SensorService {
         Sensor sensorRemovido = procurarSensorAtivo(codigoSensor);
         sensorRemovido.setAtivo(false);
 
+        Estacao estacaoVinculada = sensorRemovido.getEstacao();
+        if (estacaoVinculada != null) {
+            estacaoVinculada.getSensores().remove(sensorRemovido);
+            sensorRemovido.setEstacao(null);
+        }
+
         repository.save(sensorRemovido);
     }
 
