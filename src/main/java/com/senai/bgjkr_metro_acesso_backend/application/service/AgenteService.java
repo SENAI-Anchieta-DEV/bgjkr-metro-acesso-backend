@@ -56,6 +56,12 @@ public class AgenteService {
         AgenteAtendimento agenteRemovido = procurarAgenteAtivo(email);
         agenteRemovido.setAtivo(false);
 
+        Estacao estacaoVinculada = agenteRemovido.getEstacao();
+        if (estacaoVinculada != null) {
+            estacaoVinculada.getAgentes().remove(agenteRemovido);
+            agenteRemovido.setEstacao(null);
+        }
+
         repository.save(agenteRemovido);
     }
 
