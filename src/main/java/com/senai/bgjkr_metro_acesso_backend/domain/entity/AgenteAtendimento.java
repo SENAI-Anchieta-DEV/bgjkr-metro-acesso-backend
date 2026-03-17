@@ -23,7 +23,7 @@ import java.time.LocalTime;
 @Table(name = "agentes_atendimento")
 public class AgenteAtendimento extends Usuario {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "estacao_id", nullable = false)
+    @JoinColumn(name = "estacao_id")
     private Estacao estacao;
 
     @Column(nullable = false)

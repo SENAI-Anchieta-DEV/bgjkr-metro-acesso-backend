@@ -56,6 +56,8 @@ public class EstacaoService {
         estacaoRemovida.setAtivo(false);
         estacaoRemovida.getSensores().forEach(sensor -> sensor.setEstacao(null));
         estacaoRemovida.getSensores().clear();
+        estacaoRemovida.getAgentes().forEach(agente -> agente.setEstacao(null));
+        estacaoRemovida.getAgentes().clear();
         repository.save(estacaoRemovida);
     }
 

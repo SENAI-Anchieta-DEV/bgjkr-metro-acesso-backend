@@ -22,7 +22,9 @@ public record AgenteResponseDto(
                 agente.getEmail(),
                 agente.getInicioTurno(),
                 agente.getFimTurno(),
-                EstacaoSummaryDto.fromEntity(agente.getEstacao())
+                agente.getEstacao() == null ?
+                        null :
+                        EstacaoSummaryDto.fromEntity(agente.getEstacao())
         );
     }
 }
