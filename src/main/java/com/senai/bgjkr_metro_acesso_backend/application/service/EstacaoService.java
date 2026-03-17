@@ -54,6 +54,8 @@ public class EstacaoService {
     public void removerEstacao(String codigoEstacao) {
         Estacao estacaoRemovida = procurarEstacaoAtiva(codigoEstacao);
         estacaoRemovida.setAtivo(false);
+        estacaoRemovida.getSensores().forEach(sensor -> sensor.setEstacao(null));
+        estacaoRemovida.getSensores().clear();
         repository.save(estacaoRemovida);
     }
 

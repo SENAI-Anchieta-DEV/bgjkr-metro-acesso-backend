@@ -16,7 +16,9 @@ public record SensorResponseDto(
                 sensor.getId(),
                 sensor.getPorta(),
                 sensor.getCodigoSensor(),
-                EstacaoSummaryDto.fromEntity(sensor.getEstacao())
+                sensor.getEstacao() == null ?
+                        null :
+                        EstacaoSummaryDto.fromEntity(sensor.getEstacao())
         );
     }
 }
