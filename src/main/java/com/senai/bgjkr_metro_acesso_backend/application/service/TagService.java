@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,12 @@ public class TagService {
     public void removerTag(String codigoTag) {
         TagPcd tagRemovida = procurarTagAtiva(codigoTag);
         tagRemovida.setAtivo(false);
+
+        UsuarioPcd pcdVinculado = tagRemovida.getUsuarioPcd();
+        if (pcdVinculado != null) {
+            pcdVinculado.setTag(null);
+            tagRemovida.setUsuarioPcd(null);
+        }
 
         repository.save(tagRemovida);
     }

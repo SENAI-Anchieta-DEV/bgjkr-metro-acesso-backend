@@ -36,7 +36,7 @@ public class UsuarioPcd extends Usuario {
     @Column(nullable = false)
     private boolean desejaSuporte;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "tag_id", nullable = false, unique = true)
+    @OneToOne
+    @JoinColumn(name = "tag_id", unique = true)
     private TagPcd tag;
 }
