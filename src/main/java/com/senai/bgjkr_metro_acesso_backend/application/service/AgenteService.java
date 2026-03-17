@@ -46,9 +46,7 @@ public class AgenteService {
     @Transactional
     public AgenteResponseDto atualizarAgente(String email, AgenteRequestDto requestDto) {
         AgenteAtendimento agenteAtualizado = procurarAgenteAtivo(email);
-
         atualizarValores(agenteAtualizado, requestDto);
-
         return AgenteResponseDto.fromEntity(repository.save(agenteAtualizado));
     }
 
@@ -56,34 +54,22 @@ public class AgenteService {
     @Transactional
     public void removerAgente(String email) {
         AgenteAtendimento agenteRemovido = procurarAgenteAtivo(email);
-
         agenteRemovido.setAtivo(false);
 
         repository.save(agenteRemovido);
     }
 
     // Funções auxiliares
-    private void atualizarValores(AgenteAtendimento agente, AgenteRequestDto requestDto) {
-        agente.setNome(requestDto.nome());
-        agente.setEmail(requestDto.email());
-        agente.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-        agente.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
-        agente.setInicioTurno(requestDto.inicioTurno());
-        agente.setFimTurno(requestDto.fimTurno());
-    }
-
-    private AgenteAtendimento reativarAgente(AgenteAtendimento agente, AgenteRequestDto requestDto) {
-        atualizarValores(agente, requestDto);
-
-        agente.setAtivo(true);
-
-        return agente;
-    }
-
     private AgenteAtendimento procurarAgenteAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
+    private AgenteAtendimento reativarAgente(AgenteAtendimento agente, AgenteRequestDto requestDto) {
+        atualizarValores(agente, requestDto);
+        agente.setAtivo(true);
+        return agente;
     }
 
     private AgenteAtendimento criarAgente(AgenteRequestDto requestDto) {
@@ -91,5 +77,14 @@ public class AgenteService {
         AgenteAtendimento agente = requestDto.toEntity(estacao);
         agente.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
         return agente;
+    }
+
+    private void atualizarValores(AgenteAtendimento agente, AgenteRequestDto requestDto) {
+        agente.setNome(requestDto.nome());
+        agente.setEmail(requestDto.email());
+        agente.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
+        agente.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
+        agente.setInicioTurno(requestDto.inicioTurno());
+        agente.setFimTurno(requestDto.fimTurno());
     }
 }

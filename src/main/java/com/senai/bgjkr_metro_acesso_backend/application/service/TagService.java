@@ -12,7 +12,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class TagService {
     private final TagRepository repository;
 
@@ -45,9 +44,7 @@ public class TagService {
     @Transactional
     public TagResponseDto atualizarTag(String codigoTag, TagRequestDto requestDto) {
         TagPcd tagAtualizada = procurarTagAtiva(codigoTag);
-
         atualizarValores(tagAtualizada, requestDto);
-
         return TagResponseDto.fromEntity(repository.save(tagAtualizada));
     }
 
@@ -55,13 +52,18 @@ public class TagService {
     @Transactional
     public void removerTag(String codigoTag) {
         TagPcd tagRemovida = procurarTagAtiva(codigoTag);
-
         tagRemovida.setAtivo(false);
 
         repository.save(tagRemovida);
     }
 
     // Funções auxiliares
+    protected TagPcd procurarTagAtiva(String codigoTag) {
+        return repository
+                .findByCodigoTagAndAtivoTrue(codigoTag)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
     private TagPcd reativarTag(TagPcd tag, TagRequestDto requestDto) {
         atualizarValores(tag, requestDto);
         tag.setAtivo(true);
@@ -70,12 +72,6 @@ public class TagService {
 
     private TagPcd criarTag(TagRequestDto requestDto) {
         return requestDto.toEntity();
-    }
-
-    protected TagPcd procurarTagAtiva(String codigoTag) {
-        return repository
-                .findByCodigoTagAndAtivoTrue(codigoTag)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 
     private void atualizarValores(TagPcd tag, TagRequestDto requestDto) {

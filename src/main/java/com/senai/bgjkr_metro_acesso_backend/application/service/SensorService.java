@@ -46,9 +46,7 @@ public class SensorService {
     @Transactional
     public SensorResponseDto atualizarSensor(String codigoSensor, SensorRequestDto requestDto) {
         Sensor sensorAtualizado = procurarSensorAtivo(codigoSensor);
-
         atualizarValores(sensorAtualizado, requestDto);
-
         return SensorResponseDto.fromEntity(repository.save(sensorAtualizado));
     }
 
@@ -56,36 +54,33 @@ public class SensorService {
     @Transactional
     public void removerSensor(String codigoSensor) {
         Sensor sensorRemovido = procurarSensorAtivo(codigoSensor);
-
         sensorRemovido.setAtivo(false);
 
         repository.save(sensorRemovido);
     }
 
     // Funções auxiliares
-    private void atualizarValores(Sensor sensor, SensorRequestDto requestDto) {
-        sensor.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
-        sensor.setCodigoSensor(requestDto.codigoSensor());
-        sensor.setPorta(requestDto.porta());
-    }
-
-    private Sensor reativarSensor(Sensor sensor, SensorRequestDto requestDto) {
-        atualizarValores(sensor, requestDto);
-
-        sensor.setAtivo(true);
-
-        return sensor;
-    }
-
     private Sensor procurarSensorAtivo(String codigoSensor) {
         return repository
                 .findByCodigoSensorAndAtivoTrue(codigoSensor)
                 .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 
+    private Sensor reativarSensor(Sensor sensor, SensorRequestDto requestDto) {
+        atualizarValores(sensor, requestDto);
+        sensor.setAtivo(true);
+        return sensor;
+    }
+
     private Sensor criarSensor(SensorRequestDto requestDto) {
         Estacao estacao = estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao());
         return requestDto.toEntity(estacao);
+    }
+
+    private void atualizarValores(Sensor sensor, SensorRequestDto requestDto) {
+        sensor.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
+        sensor.setCodigoSensor(requestDto.codigoSensor());
+        sensor.setPorta(requestDto.porta());
     }
 }
 

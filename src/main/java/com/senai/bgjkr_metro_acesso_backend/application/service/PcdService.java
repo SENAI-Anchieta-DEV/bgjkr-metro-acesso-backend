@@ -61,27 +61,16 @@ public class PcdService {
     }
 
     // Funções auxiliares
-    private void atualizarValores(UsuarioPcd pcd, PcdRequestDto requestDto) {
-        pcd.setNome(requestDto.nome());
-        pcd.setEmail(requestDto.email());
-        pcd.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-        pcd.setTag(tagService.procurarTagAtiva(requestDto.codigoTag()));
-        pcd.setTiposDeficiencia(requestDto.tiposDeficiencia());
-        pcd.setDesejaSuporte(requestDto.desejaSuporte());
+    protected UsuarioPcd procurarPcdAtivo(String email) {
+        return repository
+                .findByEmailAndAtivoTrue(email)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 
     private UsuarioPcd reativarPcd(UsuarioPcd pcd, PcdRequestDto requestDto) {
         atualizarValores(pcd, requestDto);
-
         pcd.setAtivo(true);
-
         return pcd;
-    }
-
-    private UsuarioPcd procurarPcdAtivo(String email) {
-        return repository
-                .findByEmailAndAtivoTrue(email)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 
     private UsuarioPcd criarPcd(PcdRequestDto requestDto) {
@@ -90,5 +79,14 @@ public class PcdService {
         pcd.setTag(tagPcd);
         pcd.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
         return pcd;
+    }
+
+    private void atualizarValores(UsuarioPcd pcd, PcdRequestDto requestDto) {
+        pcd.setNome(requestDto.nome());
+        pcd.setEmail(requestDto.email());
+        pcd.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
+        pcd.setTag(tagService.procurarTagAtiva(requestDto.codigoTag()));
+        pcd.setTiposDeficiencia(requestDto.tiposDeficiencia());
+        pcd.setDesejaSuporte(requestDto.desejaSuporte());
     }
 }

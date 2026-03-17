@@ -57,9 +57,21 @@ public class AdminService {
     }
 
     // Funções auxiliares
+    private Administrador procurarAdminAtivo(String email) {
+        return repository
+                .findByEmailAndAtivoTrue(email)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
     private Administrador reativarAdmin(Administrador admin, AdminRequestDto requestDto) {
         admin.setAtivo(true);
         atualizarValores(admin, requestDto);
+        return admin;
+    }
+
+    private Administrador criarAdmin(AdminRequestDto requestDto) {
+        Administrador admin = requestDto.toEntity();
+        admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
         return admin;
     }
 
@@ -67,17 +79,5 @@ public class AdminService {
         admin.setNome(requestDto.nome());
         admin.setEmail(requestDto.email());
         admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-    }
-
-    private Administrador procurarAdminAtivo(String email) {
-        return repository
-                .findByEmailAndAtivoTrue(email)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
-    }
-
-    private Administrador criarAdmin(AdminRequestDto requestDto) {
-        Administrador admin = requestDto.toEntity();
-        admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-        return admin;
     }
 }

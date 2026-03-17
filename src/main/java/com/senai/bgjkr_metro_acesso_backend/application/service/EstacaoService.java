@@ -58,6 +58,12 @@ public class EstacaoService {
     }
 
     // Funções auxiliares
+    protected Estacao procurarEstacaoAtiva(String codigoEstacao) {
+        return repository
+                .findByCodigoEstacaoAndAtivoTrue(codigoEstacao)
+                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
     private Estacao reativarEstacao(Estacao estacao, EstacaoRequestDto requestDto) {
         atualizarValores(estacao, requestDto);
         estacao.setAtivo(true);
@@ -66,12 +72,6 @@ public class EstacaoService {
 
     private Estacao criarEstacao(EstacaoRequestDto requestDto) {
         return requestDto.toEntity();
-    }
-
-    protected Estacao procurarEstacaoAtiva(String codigoEstacao) {
-        return repository
-                .findByCodigoEstacaoAndAtivoTrue(codigoEstacao)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 
     private void atualizarValores(Estacao estacao, EstacaoRequestDto requestDto) {
