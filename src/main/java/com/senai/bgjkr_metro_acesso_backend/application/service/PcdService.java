@@ -47,9 +47,7 @@ public class PcdService {
     @Transactional
     public PcdResponseDto atualizarPcd(String email, PcdRequestDto requestDto) {
         UsuarioPcd pcdAtualizado = procurarPcdAtivo(email);
-
         atualizarValores(pcdAtualizado, requestDto);
-
         return PcdResponseDto.fromEntity(repository.save(pcdAtualizado));
     }
 
@@ -57,7 +55,6 @@ public class PcdService {
     @Transactional
     public void removerPcd(String email) {
         UsuarioPcd pcdRemovido = procurarPcdAtivo(email);
-
         pcdRemovido.setAtivo(false);
 
         repository.save(pcdRemovido);
@@ -69,7 +66,7 @@ public class PcdService {
         pcd.setEmail(requestDto.email());
         pcd.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
         pcd.setTag(tagService.procurarTagAtiva(requestDto.codigoTag()));
-        pcd.setTipoDeficiencia(requestDto.tipoDeficiencia());
+        pcd.setTiposDeficiencia(requestDto.tiposDeficiencia());
         pcd.setDesejaSuporte(requestDto.desejaSuporte());
     }
 

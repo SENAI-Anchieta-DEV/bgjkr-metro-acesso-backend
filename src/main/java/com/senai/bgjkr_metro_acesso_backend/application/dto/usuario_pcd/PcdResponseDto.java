@@ -4,11 +4,13 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagSummaryDt
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
 
+import java.util.Set;
+
 public record PcdResponseDto(
         String id,
         String nome,
         String email,
-        TipoDeficiencia tipoDeficiencia,
+        Set<TipoDeficiencia> tiposDeficiencia,
         Boolean desejaSuporte,
         TagSummaryDto tag
 ) {
@@ -19,7 +21,7 @@ public record PcdResponseDto(
                 usuarioPcd.getId(),
                 usuarioPcd.getNome(),
                 usuarioPcd.getEmail(),
-                usuarioPcd.getTipoDeficiencia(),
+                usuarioPcd.getTiposDeficiencia(),
                 usuarioPcd.isDesejaSuporte(),
                 usuarioPcd.getTag() == null ?
                         null :

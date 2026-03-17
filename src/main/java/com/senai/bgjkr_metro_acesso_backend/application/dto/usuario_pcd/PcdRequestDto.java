@@ -5,11 +5,13 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Role;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
 
+import java.util.Set;
+
 public record PcdRequestDto(
         String nome,
         String email,
         String senha,
-        TipoDeficiencia tipoDeficiencia,
+        Set<TipoDeficiencia> tiposDeficiencia,
         Boolean desejaSuporte,
         String codigoTag
 ) {
@@ -22,7 +24,7 @@ public record PcdRequestDto(
                 .senha(senha)
                 .ativo(true)
                 .role(Role.USUARIO_PCD)
-                .tipoDeficiencia(tipoDeficiencia)
+                .tiposDeficiencia(tiposDeficiencia)
                 .desejaSuporte(desejaSuporte)
                 .tag(tagPcd)
                 .build();
