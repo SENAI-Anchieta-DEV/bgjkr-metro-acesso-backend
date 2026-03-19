@@ -57,7 +57,7 @@ public class AdminService {
     }
 
     // Funções auxiliares
-    private Administrador procurarAdminAtivo(String email) {
+    protected Administrador procurarAdminAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
