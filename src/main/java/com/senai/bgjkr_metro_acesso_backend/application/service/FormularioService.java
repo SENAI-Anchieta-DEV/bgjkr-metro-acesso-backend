@@ -46,6 +46,17 @@ public class FormularioService {
 
         atualizarValores(formAnalisado, requestDto, adminResponsavel);
 
+        if (requestDto.aprovado()) {
+            pcdService.registrarPcd(new PcdRequestDto(
+                    formAnalisado.getNome(),
+                    email,
+                    formAnalisado.getSenha(),
+                    new HashSet<>(formAnalisado.getTiposDeficiencia()),
+                    formAnalisado.isDesejaSuporte(),
+                    tagService.escolherTagDisponivel().getCodigoTag()
+            ));
+        }
+
         return FormAprovacaoResponseDto.fromEntity(formAnalisado);
     }
 
