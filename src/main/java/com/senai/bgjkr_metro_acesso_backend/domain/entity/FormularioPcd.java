@@ -24,6 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -75,6 +76,9 @@ public class FormularioPcd {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusFormulario status;
+
+    @Column(nullable = false)
+    private MultipartFile comprovante;
 
     @Column(nullable = false)
     private boolean ativo;

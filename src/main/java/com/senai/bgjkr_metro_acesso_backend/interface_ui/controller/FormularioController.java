@@ -24,8 +24,13 @@ public class FormularioController {
     }
 
     @PutMapping("/{email}")
+    public FormSolicitacaoDto atualizarFormulario(@PathVariable String email, @RequestBody FormSolicitacaoDto requestDto) {
+        return service.atualizarFormulario(email, requestDto);
+    }
+
+    @PutMapping("/{email}/validar")
     public FormAprovacaoResponseDto aprovarFormulario(@PathVariable String email, @RequestBody FormAprovacaoRequestDto requestDto) {
-        return service.aprovarFormulario(email, requestDto);
+        return service.validarFormulario(email, requestDto);
     }
 }
 

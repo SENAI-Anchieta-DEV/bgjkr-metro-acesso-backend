@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminR
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.FormularioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusFormulario;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
@@ -15,7 +16,8 @@ public record FormAprovacaoResponseDto(
         Boolean desejaSuporte,
         String motivoReprovacao,
         AdminResponseDto adminResponseDto,
-        StatusFormulario status
+        StatusFormulario status,
+        MultipartFile comprovante
 ) {
     public static FormAprovacaoResponseDto fromEntity(
             FormularioPcd formulario
@@ -28,7 +30,8 @@ public record FormAprovacaoResponseDto(
                 formulario.isDesejaSuporte(),
                 formulario.getMotivoReprovacao(),
                 AdminResponseDto.fromEntity(formulario.getAdminResponsavel()),
-                formulario.getStatus()
+                formulario.getStatus(),
+                formulario.getComprovante()
         );
     }
 }

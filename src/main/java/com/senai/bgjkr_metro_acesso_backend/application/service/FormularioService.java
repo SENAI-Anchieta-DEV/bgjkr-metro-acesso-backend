@@ -23,47 +23,75 @@ public class FormularioService {
     private final AdminService adminService;
     private final TagService tagService;
     private final PcdService pcdService;
+    private final UsuarioService usuarioService;
 
     @Transactional
     public FormSolicitacaoDto enviarFormulario(FormSolicitacaoDto requestDto) {
-        repository.findByEmail(requestDto.email())
-                .ifPresent(f -> {
-                    throw new RuntimeException("Este e-mail já está vinculado a um formulário."); // Exception específica em futura feature
-                });
+        verificarFormularioExistente(requestDto.email());
+        usuarioService.verificarUsuarioExistente(requestDto.email());
 
         FormularioPcd formRegistrado = criarFormulario(requestDto);
         return FormSolicitacaoDto.fromEntity(repository.save(formRegistrado));
     }
 
     @Transactional
-    public FormAprovacaoResponseDto aprovarFormulario(String email, FormAprovacaoRequestDto requestDto) {
+    public FormSolicitacaoDto atualizarFormulario(String email, FormSolicitacaoDto requestDto) {
+        FormularioPcd formAtualizado = procurarFormularioAtivo(email);
+        atualizarSolicitacao(formAtualizado, requestDto);
+        return FormSolicitacaoDto.fromEntity(formAtualizado);
+    }
+
+    @Transactional
+    public FormAprovacaoResponseDto validarFormulario(String email, FormAprovacaoRequestDto requestDto) {
+        exigirMotivoReprovacao(requestDto);
+
+        FormularioPcd formValidado = procurarFormularioAtivo(email);
+        Administrador adminResponsavel = buscarAdministradorResponsavel();
+
+        atualizarAprovacao(formValidado, requestDto, adminResponsavel);
+        if (requestDto.aprovado()) {
+            solicitarNovoPcd(email, formValidado);
+        }
+
+        return FormAprovacaoResponseDto.fromEntity(formValidado);
+    }
+
+    private void exigirMotivoReprovacao(FormAprovacaoRequestDto requestDto) {
         if (!requestDto.aprovado() && (requestDto.motivoReprovacao() == null || requestDto.motivoReprovacao().isBlank())) {
             throw new IllegalArgumentException("Motivo é obrigatório para reprovação"); // Exception específica em futura feature
         }
+    }
 
-        FormularioPcd formAnalisado = procurarFormularioAtivo(email);
-        Administrador adminResponsavel = buscarAdministradorResponsavel();
+    private void solicitarNovoPcd(String email, FormularioPcd formulario) {
+        pcdService.registrarPcd(new PcdRequestDto(
+                formulario.getNome(),
+                email,
+                formulario.getSenha(),
+                new HashSet<>(formulario.getTiposDeficiencia()),
+                formulario.isDesejaSuporte(),
+                tagService.escolherTagDisponivel().getCodigoTag()
+        ));
+    }
 
-        atualizarValores(formAnalisado, requestDto, adminResponsavel);
-
-        if (requestDto.aprovado()) {
-            pcdService.registrarPcd(new PcdRequestDto(
-                    formAnalisado.getNome(),
-                    email,
-                    formAnalisado.getSenha(),
-                    new HashSet<>(formAnalisado.getTiposDeficiencia()),
-                    formAnalisado.isDesejaSuporte(),
-                    tagService.escolherTagDisponivel().getCodigoTag()
-            ));
+    private void verificarFormularioExistente(String email) {
+        if (repository.findByEmailAndAtivoTrue(email).isPresent()) {
+            throw new IllegalArgumentException("Já existe um formulário ativo para este email."); // Exception específica em futura feature
         }
-
-        return FormAprovacaoResponseDto.fromEntity(formAnalisado);
     }
 
     private FormularioPcd criarFormulario(FormSolicitacaoDto requestDto) {
         FormularioPcd formulario = requestDto.toEntity();
         formulario.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
         return formulario;
+    }
+
+    private void atualizarSolicitacao(FormularioPcd formulario, FormSolicitacaoDto requestDto) {
+        formulario.setNome(requestDto.nome());
+        formulario.setEmail(requestDto.email());
+        formulario.setSenha(requestDto.senha());
+        formulario.setTiposDeficiencia(requestDto.tiposDeficiencia());
+        formulario.setDesejaSuporte(requestDto.desejaSuporte());
+        formulario.setComprovante(requestDto.desejaSuporte());
     }
 
     private Administrador buscarAdministradorResponsavel() {
@@ -80,7 +108,7 @@ public class FormularioService {
                 .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
     }
 
-    private void atualizarValores(FormularioPcd formulario, FormAprovacaoRequestDto requestDto, Administrador adminResponsavel) {
+    private void atualizarAprovacao(FormularioPcd formulario, FormAprovacaoRequestDto requestDto, Administrador adminResponsavel) {
         formulario.setStatus(requestDto.aprovado() ? StatusFormulario.APROVADO : StatusFormulario.REPROVADO);
         formulario.setMotivoReprovacao(requestDto.motivoReprovacao());
         formulario.setAdminResponsavel(adminResponsavel);
