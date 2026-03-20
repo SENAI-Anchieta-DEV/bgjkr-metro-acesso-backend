@@ -4,8 +4,10 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDt
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -16,30 +18,39 @@ public class TagController {
 
    // CREATE
     @PostMapping
-    public TagResponseDto registrarTag(@RequestBody TagRequestDto requestDto) {
-        return service.registrarTag(requestDto);
+    public ResponseEntity<TagResponseDto> registrarTag(@RequestBody TagRequestDto requestDto) {
+        return ResponseEntity
+                .created(URI.create("api/tag"))
+                .body(service.registrarTag(requestDto));
     }
 
     // READ
     @GetMapping
-    public List<TagResponseDto> listarTagsAtivas() {
-        return service.listarTagsAtivas();
+    public ResponseEntity<List<TagResponseDto>> listarTagsAtivas() {
+        return ResponseEntity
+                .ok(service.listarTagsAtivas());
     }
+
     @GetMapping("/{codigoTag}")
-    public TagResponseDto buscarTagAtiva(@PathVariable String codigoTag) {
-        return service.buscarTagAtiva(codigoTag);
+    public ResponseEntity<TagResponseDto> buscarTagAtiva(@PathVariable String codigoTag) {
+        return ResponseEntity
+                .ok(service.buscarTagAtiva(codigoTag));
     }
 
     // UPDATE
     @PutMapping("/{codigoTag}")
-    public TagResponseDto atualizarTag(@PathVariable String codigoTag, @RequestBody TagRequestDto requestDto) {
-        return service.atualizarTag(codigoTag, requestDto);
+    public ResponseEntity<TagResponseDto> atualizarTag(@PathVariable String codigoTag, @RequestBody TagRequestDto requestDto) {
+        return ResponseEntity
+                .ok(service.atualizarTag(codigoTag, requestDto));
     }
 
     // DELETE
     @DeleteMapping("/{codigoTag}")
-    public void removerTag(@PathVariable String codigoTag) {
+    public ResponseEntity<Void> removerTag(@PathVariable String codigoTag) {
         service.removerTag(codigoTag);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }
 

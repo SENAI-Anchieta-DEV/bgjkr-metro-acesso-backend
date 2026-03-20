@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.authentication.AuthR
 import com.senai.bgjkr_metro_acesso_backend.application.dto.authentication.AuthResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,8 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/login")
-    public AuthResponseDto login(@RequestBody AuthRequestDto requestDto) {
-        return service.login(requestDto);
+    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto requestDto) {
+        return ResponseEntity
+                .ok(service.login(requestDto));
     }
 }
