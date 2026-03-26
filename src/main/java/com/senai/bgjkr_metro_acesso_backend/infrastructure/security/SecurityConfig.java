@@ -48,15 +48,20 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
 
-                        .requestMatchers(HttpMethod.GET, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.POST, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-
-                        .requestMatchers(HttpMethod.GET, "/api/estacao/**").hasAnyRole( "ADMINISTRADOR", "AGENTE_ATENDIMENTO")
+                        .requestMatchers(HttpMethod.GET, "/api/estacao/**").hasAnyRole( "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/estacao/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/estacao/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/estacao/**").hasRole("ADMINISTRADOR")
+
+                        .requestMatchers(HttpMethod.GET, "/api/sensor/**").hasRole( "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/sensor/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/sensor/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sensor/**").hasRole("ADMINISTRADOR")
+
+                        .requestMatchers(HttpMethod.GET, "/api/tag/**").hasRole( "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/tag/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/tag/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tag/**").hasRole("ADMINISTRADOR")
 
                         .anyRequest().authenticated()
                 )
