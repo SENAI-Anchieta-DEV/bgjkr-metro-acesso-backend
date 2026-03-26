@@ -24,8 +24,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 @Entity
@@ -78,7 +78,7 @@ public class FormularioPcd {
     private StatusFormulario status;
 
     @Column(nullable = false)
-    private MultipartFile comprovante;
+    private String comprovacaoId;
 
     @Column(nullable = false)
     private boolean ativo;

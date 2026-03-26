@@ -5,17 +5,19 @@ import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusFormulario;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.util.Set;
 
-public record FormSolicitacaoDto(
+public record FormSolicitacaoRequestDto(
         String nome,
         String email,
         String senha,
         Set<TipoDeficiencia> tiposDeficiencia,
         Boolean desejaSuporte,
-        MultipartFile comprovante
+        MultipartFile comprovacao
 ) {
     public FormularioPcd toEntity(
+            String comprovacaoId
     ) {
         return FormularioPcd.builder()
                 .nome(nome)
@@ -26,21 +28,8 @@ public record FormSolicitacaoDto(
                 .motivoReprovacao(null)
                 .adminResponsavel(null)
                 .status(StatusFormulario.EM_ANALISE)
-                .comprovante(comprovante)
+                .comprovacaoId(comprovacaoId)
                 .ativo(true)
                 .build();
-    }
-
-    public static FormSolicitacaoDto fromEntity(
-            FormularioPcd formulario
-    ) {
-        return new FormSolicitacaoDto(
-                formulario.getNome(),
-                formulario.getEmail(),
-                formulario.getSenha(),
-                formulario.getTiposDeficiencia(),
-                formulario.isDesejaSuporte(),
-                formulario.getComprovante()
-        );
     }
 }
