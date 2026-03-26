@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorRequest
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.SensorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -23,31 +25,39 @@ public class SensorController {
 
     // CREATE
     @PostMapping
-    public SensorResponseDto registrarSensor(@RequestBody SensorRequestDto requestDto) {
-        return service.registrarSensor(requestDto);
+    public ResponseEntity<SensorResponseDto> registrarSensor(@RequestBody SensorRequestDto requestDto) {
+        return ResponseEntity
+                .created(URI.create("api/sensor"))
+                .body(service.registrarSensor(requestDto));
     }
 
     // READ
     @GetMapping
-    public List<SensorResponseDto> listarSensorsAtivos() {
-        return service.listarSensorsAtivos();
+    public ResponseEntity<List<SensorResponseDto>> listarSensorsAtivos() {
+        return ResponseEntity
+                .ok(service.listarSensorsAtivos());
     }
 
     @GetMapping("/{codigoSensor}")
-    public SensorResponseDto buscarSensorAtivo(@PathVariable String codigoSensor) {
-        return service.buscarSensorAtivo(codigoSensor);
+    public ResponseEntity<SensorResponseDto> buscarSensorAtivo(@PathVariable String codigoSensor) {
+        return ResponseEntity
+                .ok(service.buscarSensorAtivo(codigoSensor));
     }
 
     // UPDATE
     @PutMapping("/{codigoSensor}")
-    public SensorResponseDto atualizarSensor(@PathVariable String codigoSensor, @RequestBody SensorRequestDto requestDto) {
-        return service.atualizarSensor(codigoSensor, requestDto);
+    public ResponseEntity<SensorResponseDto> atualizarSensor(@PathVariable String codigoSensor, @RequestBody SensorRequestDto requestDto) {
+        return ResponseEntity
+                .ok(service.atualizarSensor(codigoSensor, requestDto));
     }
 
     // DELETE
     @DeleteMapping("/{codigoSensor}")
-    public void removerSensor(@PathVariable String codigoSensor) {
+    public ResponseEntity<Void> removerSensor(@PathVariable String codigoSensor) {
         service.removerSensor(codigoSensor);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }
 
