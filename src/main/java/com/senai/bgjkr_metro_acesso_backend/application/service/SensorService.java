@@ -6,6 +6,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class SensorService {
 
     // CREATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public SensorResponseDto registrarSensor(SensorRequestDto requestDto) {
         Sensor sensorRegistrado = repository.findByCodigoSensor(requestDto.codigoSensor())
                 .map(sensor -> sensor.isAtivo() ? sensor : reativarSensor(sensor, requestDto))
@@ -29,6 +31,7 @@ public class SensorService {
 
     // READ
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<SensorResponseDto> listarSensorsAtivos() {
         return repository
                 .findAllByAtivoTrue()
@@ -38,12 +41,14 @@ public class SensorService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public SensorResponseDto buscarSensorAtivo(String codigoSensor) {
         return SensorResponseDto.fromEntity(procurarSensorAtivo(codigoSensor));
     }
 
     // UPDATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public SensorResponseDto atualizarSensor(String codigoSensor, SensorRequestDto requestDto) {
         Sensor sensorAtualizado = procurarSensorAtivo(codigoSensor);
         atualizarValores(sensorAtualizado, requestDto);
@@ -52,6 +57,7 @@ public class SensorService {
 
     // DELETE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerSensor(String codigoSensor) {
         Sensor sensorRemovido = procurarSensorAtivo(codigoSensor);
         sensorRemovido.setAtivo(false);
