@@ -8,6 +8,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.enums.TipoDeficiencia;
 import java.util.Set;
 
 public record FormAprovacaoResponseDto(
+        String id,
         String nome,
         String email,
         String senha,
@@ -22,6 +23,7 @@ public record FormAprovacaoResponseDto(
             FormularioPcd formulario
     ) {
         return new FormAprovacaoResponseDto(
+                formulario.getId(),
                 formulario.getNome(),
                 formulario.getEmail(),
                 formulario.getSenha(),

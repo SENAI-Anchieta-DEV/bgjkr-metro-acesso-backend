@@ -6,9 +6,18 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormS
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormSolicitacaoResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.FormularioService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/formulario")
@@ -16,14 +25,21 @@ import java.io.IOException;
 public class FormularioController {
     private final FormularioService service;
 
-    @PostMapping
-    public FormSolicitacaoResponseDto enviarFormulario(@RequestBody FormSolicitacaoRequestDto requestDto) {
-        return service.enviarFormulario(requestDto);
+    // CREATE
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public FormSolicitacaoResponseDto registrarFormulario(@ModelAttribute FormSolicitacaoRequestDto requestDto) {
+        return service.registrarFormulario(requestDto);
     }
 
-    @PutMapping("/{email}")
-    public FormSolicitacaoResponseDto atualizarFormulario(@PathVariable String email, @RequestBody FormSolicitacaoRequestDto requestDto) {
-        return service.atualizarFormulario(email, requestDto);
+    // READ
+    @GetMapping
+    public List<FormAprovacaoResponseDto> listarFormulariosAtivos() {
+        return service.listarFormulariosAtivos();
+    }
+
+    @GetMapping("/pendentes")
+    public List<FormSolicitacaoResponseDto> listarFormulariosPendentes() {
+        return service.listarFormulariosPendentes();
     }
 
     @GetMapping("/{email}")
@@ -31,15 +47,22 @@ public class FormularioController {
         return service.buscarFormularioAtivo(email);
     }
 
-    @DeleteMapping("/{email}")
-    public void removerFormulario(@PathVariable String email) {
-        service.removerFormulario(email);
+    // UPDATE
+    @PutMapping(path = "/pendentes/{email}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public FormSolicitacaoResponseDto atualizarFormularioPendente(@PathVariable String email, @ModelAttribute FormSolicitacaoRequestDto requestDto) {
+        return service.atualizarFormularioPendente(email, requestDto);
     }
 
-    @PutMapping("/{email}/validar")
-    public FormAprovacaoResponseDto aprovarFormulario(@PathVariable String email, @RequestBody FormAprovacaoRequestDto requestDto) {
+    // DELETE
+    @DeleteMapping("/pendentes/{email}")
+    public void removerFormularioPendente(@PathVariable String email) {
+        service.removerFormularioPendente(email);
+    }
+
+    // REQUISITOS FUNCIONAIS
+    @PostMapping("/validar/{email}")
+    public FormAprovacaoResponseDto validarFormulario(@PathVariable String email, @RequestBody FormAprovacaoRequestDto requestDto) {
         return service.validarFormulario(email, requestDto);
     }
-
 }
 

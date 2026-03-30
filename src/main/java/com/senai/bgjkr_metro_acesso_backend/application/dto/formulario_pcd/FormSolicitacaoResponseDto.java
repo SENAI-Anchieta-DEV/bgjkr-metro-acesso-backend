@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 public record FormSolicitacaoResponseDto(
+        String id,
         String nome,
         String email,
         String senha,
@@ -18,6 +19,7 @@ public record FormSolicitacaoResponseDto(
             FormularioPcd formulario
     ) {
         return new FormSolicitacaoResponseDto(
+                formulario.getId(),
                 formulario.getNome(),
                 formulario.getEmail(),
                 formulario.getSenha(),

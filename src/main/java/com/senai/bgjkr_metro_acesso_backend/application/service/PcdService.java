@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdReque
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
+import com.senai.bgjkr_metro_acesso_backend.domain.repository.FormularioRepository;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PcdRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.List;
 public class PcdService {
     private final PcdRepository repository;
     private final TagService tagService;
+    private final FormularioRepository formRepository;
 
     // CREATE
     @Transactional
@@ -56,6 +58,8 @@ public class PcdService {
     public void removerPcd(String email) {
         UsuarioPcd pcdRemovido = procurarPcdAtivo(email);
         pcdRemovido.setAtivo(false);
+        formRepository.findByEmailAndAtivoTrue(email)
+                .ifPresent(form -> form.setAtivo(false));
 
         TagPcd tagVinculada = pcdRemovido.getTag();
         if (tagVinculada != null) {
@@ -71,6 +75,10 @@ public class PcdService {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+    }
+
+    protected boolean existePcdAtivo(String email) {
+        return repository.existsByEmailAndAtivoTrue(email);
     }
 
     private UsuarioPcd reativarPcd(UsuarioPcd pcd, PcdRequestDto requestDto) {
