@@ -5,6 +5,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminR
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Administrador;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class AdminService {
 
     // CREATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public AdminResponseDto registrarAdmin(AdminRequestDto requestDto) {
         Administrador adminRegistrado = repository.findByEmail(requestDto.email())
                 .map(admin -> admin.isAtivo() ? admin : reativarAdmin(admin, requestDto))
@@ -27,6 +29,7 @@ public class AdminService {
 
     // READ
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<AdminResponseDto> listarAdminsAtivos() {
         return repository
                 .findAllByAtivoTrue()
@@ -36,12 +39,14 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public AdminResponseDto buscarAdminAtivo(String email) {
         return AdminResponseDto.fromEntity(procurarAdminAtivo(email));
     }
 
     // UPDATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public AdminResponseDto atualizarAdmin(String email, AdminRequestDto requestDto) {
         Administrador adminAtualizado = procurarAdminAtivo(email);
         atualizarValores(adminAtualizado, requestDto);
@@ -50,6 +55,7 @@ public class AdminService {
 
     // DELETE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerAdmin(String email) {
         Administrador adminRemovido = procurarAdminAtivo(email);
         adminRemovido.setAtivo(false);

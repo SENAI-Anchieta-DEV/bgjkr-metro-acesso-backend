@@ -6,6 +6,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.AgenteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class AgenteService {
 
     // CREATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public AgenteResponseDto registrarAgente(AgenteRequestDto requestDto) {
         AgenteAtendimento agenteRegistrado = repository.findByEmail(requestDto.email())
                 .map(agente -> agente.isAtivo() ? agente : reativarAgente(agente, requestDto))
@@ -29,6 +31,7 @@ public class AgenteService {
 
     // READ
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<AgenteResponseDto> listarAgentesAtivos() {
         return repository
                 .findAllByAtivoTrue()
@@ -38,12 +41,14 @@ public class AgenteService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
     public AgenteResponseDto buscarAgenteAtivo(String email) {
         return AgenteResponseDto.fromEntity(procurarAgenteAtivo(email));
     }
 
     // UPDATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
     public AgenteResponseDto atualizarAgente(String email, AgenteRequestDto requestDto) {
         AgenteAtendimento agenteAtualizado = procurarAgenteAtivo(email);
         atualizarValores(agenteAtualizado, requestDto);
@@ -52,6 +57,7 @@ public class AgenteService {
 
     // DELETE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerAgente(String email) {
         AgenteAtendimento agenteRemovido = procurarAgenteAtivo(email);
         agenteRemovido.setAtivo(false);

@@ -6,6 +6,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class TagService {
 
     // CREATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public TagResponseDto registrarTag(TagRequestDto requestDto) {
         TagPcd tagRegistrado = repository.findByCodigoTag(requestDto.codigoTag())
                 .map(tag -> tag.isAtivo() ? tag : reativarTag(tag, requestDto))
@@ -28,6 +30,7 @@ public class TagService {
 
     // READ
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<TagResponseDto> listarTagsAtivas() {
         return repository
                 .findAllByAtivoTrue()
@@ -37,12 +40,14 @@ public class TagService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public TagResponseDto buscarTagAtiva(String codigoTag) {
         return TagResponseDto.fromEntity(procurarTagAtiva(codigoTag));
     }
 
     // UPDATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public TagResponseDto atualizarTag(String codigoTag, TagRequestDto requestDto) {
         TagPcd tagAtualizada = procurarTagAtiva(codigoTag);
         atualizarValores(tagAtualizada, requestDto);
@@ -51,6 +56,7 @@ public class TagService {
 
     // DELETE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerTag(String codigoTag) {
         TagPcd tagRemovida = procurarTagAtiva(codigoTag);
         tagRemovida.setAtivo(false);

@@ -6,6 +6,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Linha;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.EstacaoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ public class EstacaoService {
 
     // CREATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public EstacaoResponseDto registrarEstacao(EstacaoRequestDto requestDto) {
         Estacao estacaoRegistrada = repository.findByCodigoEstacao(requestDto.codigoEstacao())
                 .map(estacao -> estacao.isAtivo() ? estacao : reativarEstacao(estacao, requestDto))
@@ -28,6 +30,7 @@ public class EstacaoService {
 
     // READ
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<EstacaoResponseDto> listarEstacoesAtivas() {
         return repository
                 .findAllByAtivoTrue()
@@ -37,12 +40,14 @@ public class EstacaoService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public EstacaoResponseDto buscarEstacaoAtiva(String codigoEstacao) {
         return EstacaoResponseDto.fromEntity(procurarEstacaoAtiva(codigoEstacao));
     }
 
     // UPDATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public EstacaoResponseDto atualizarEstacao(String codigoEstacao, EstacaoRequestDto requestDto) {
         Estacao estacaoAtualizada = procurarEstacaoAtiva(codigoEstacao);
         atualizarValores(estacaoAtualizada, requestDto);
@@ -51,6 +56,7 @@ public class EstacaoService {
 
     // DELETE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerEstacao(String codigoEstacao) {
         Estacao estacaoRemovida = procurarEstacaoAtiva(codigoEstacao);
         estacaoRemovida.setAtivo(false);
