@@ -1,5 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.infrastructure.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMINISTRADOR")
@@ -40,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/agente/**").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/api/pcd/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR", "AGENTE_ATENDIMENTO")
-                        .requestMatchers(HttpMethod.POST, "/api/pcd/**").hasRole( "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/pcd/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/pcd/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/pcd/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
 
@@ -49,22 +50,34 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/formulario/**").hasAnyRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/formulario/**").hasAnyRole("ADMINISTRADOR")
 
-                        .requestMatchers(HttpMethod.GET, "/api/estacao/**").hasAnyRole( "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/estacao/**").hasAnyRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/estacao/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/estacao/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/estacao/**").hasRole("ADMINISTRADOR")
 
-                        .requestMatchers(HttpMethod.GET, "/api/sensor/**").hasRole( "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/sensor/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/sensor/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/sensor/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/sensor/**").hasRole("ADMINISTRADOR")
 
-                        .requestMatchers(HttpMethod.GET, "/api/tag/**").hasRole( "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/tag/**").hasRole("ADMINISTRADOR")
 
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            if (!response.isCommitted()) {
+                                System.out.println("authenticationEntryPoint: " + authException.getMessage() + " | URL: " + request.getRequestURI());
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                            }
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            System.out.println("accessDeniedHandler: " + accessDeniedException.getMessage() + " | URL: " + request.getRequestURI());
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                        })
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
