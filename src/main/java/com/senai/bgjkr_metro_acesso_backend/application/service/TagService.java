@@ -65,6 +65,12 @@ public class TagService {
     }
 
     // Funções auxiliares
+    protected TagPcd escolherTagDisponivel() {
+        return repository
+                .findFirstByUsuarioPcdNull()
+                .orElseThrow(() -> new RuntimeException("Não há tag disponível.")); // Exception específica em futura feature
+    }
+
     protected TagPcd procurarTagAtiva(String codigoTag) {
         return repository
                 .findByCodigoTagAndAtivoTrue(codigoTag)
