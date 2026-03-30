@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoReque
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.EstacaoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -23,30 +25,38 @@ public class EstacaoController {
 
     // CREATE
     @PostMapping
-    public EstacaoResponseDto registrarEstacao(@RequestBody EstacaoRequestDto requestDto) {
-        return service.registrarEstacao(requestDto);
+    public ResponseEntity<EstacaoResponseDto> registrarEstacao(@RequestBody EstacaoRequestDto requestDto) {
+        return ResponseEntity
+                .created(URI.create("api/estacao"))
+                .body(service.registrarEstacao(requestDto));
     }
 
     // READ
     @GetMapping
-    public List<EstacaoResponseDto> listarEstacoesAtivas() {
-        return service.listarEstacoesAtivas();
+    public ResponseEntity<List<EstacaoResponseDto>> listarEstacoesAtivas() {
+        return ResponseEntity
+                .ok(service.listarEstacoesAtivas());
     }
 
-    @GetMapping("/{id}")
-    public EstacaoResponseDto buscarEstacaoAtiva(@PathVariable String id) {
-        return service.buscarEstacaoAtiva(id);
+    @GetMapping("/{codigo}")
+    public ResponseEntity<EstacaoResponseDto> buscarEstacaoAtiva(@PathVariable String codigo) {
+        return ResponseEntity
+                .ok(service.buscarEstacaoAtiva(codigo));
     }
 
     // UPDATE
-    @PutMapping("/{id}")
-    public EstacaoResponseDto atualizarEstacao(@PathVariable String id, @RequestBody EstacaoRequestDto requestDto) {
-        return service.atualizarEstacao(id, requestDto);
+    @PutMapping("/{codigo}")
+    public ResponseEntity<EstacaoResponseDto> atualizarEstacao(@PathVariable String codigo, @RequestBody EstacaoRequestDto requestDto) {
+        return ResponseEntity
+                .ok(service.atualizarEstacao(codigo, requestDto));
     }
 
     // DELETE
-    @DeleteMapping("/{id}")
-    public void removerEstacao(@PathVariable String id) {
-        service.removerEstacao(id);
+    @DeleteMapping("/{codigo}")
+    public ResponseEntity<Void> removerEstacao(@PathVariable String codigo) {
+        service.removerEstacao(codigo);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

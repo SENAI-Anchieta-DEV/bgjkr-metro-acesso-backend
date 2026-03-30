@@ -14,4 +14,6 @@ public interface PcdRepository extends JpaRepository<UsuarioPcd, String> {
     List<UsuarioPcd> findAllByAtivoTrue();
 
     Optional<UsuarioPcd> findByEmailAndAtivoTrue(String email);
+
+    boolean existsByEmailAndAtivoTrue(String email);
 }
