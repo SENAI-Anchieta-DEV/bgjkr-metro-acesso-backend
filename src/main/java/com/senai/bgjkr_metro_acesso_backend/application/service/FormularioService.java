@@ -10,6 +10,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.FormularioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusFormulario;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.FormularioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class FormularioService {
 
     // READ
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<FormAprovacaoResponseDto> listarFormulariosAtivos() {
         return repository.findAllByAtivoTrue()
                 .stream()
@@ -55,6 +57,7 @@ public class FormularioService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<FormSolicitacaoResponseDto> listarFormulariosPendentes() {
         return repository.findAllByStatusAndAtivoTrue(StatusFormulario.EM_ANALISE)
                 .stream()
@@ -63,12 +66,14 @@ public class FormularioService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public FormAprovacaoResponseDto buscarFormularioAtivo(String email) {
         return FormAprovacaoResponseDto.fromEntity(procurarFormularioAtivo(email));
     }
 
     // UPDATE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public FormSolicitacaoResponseDto atualizarFormularioPendente(String email, FormSolicitacaoRequestDto requestDto) {
         usuarioService.impedirEmailAtivo(requestDto.email());
         impedirNaoComprovado(requestDto.comprovacao());
@@ -80,6 +85,7 @@ public class FormularioService {
 
     // DELETE
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerFormularioPendente(String email) {
         impedirPcdAtivo(email);
         FormularioPcd formRemovido = procurarFormularioAtivo(email);
@@ -88,6 +94,7 @@ public class FormularioService {
 
     // OUTRAS FUNCIONALIDADES
     @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public FormAprovacaoResponseDto validarFormulario(String email, FormAprovacaoRequestDto requestDto) {
         impedirMotivoInvalido(requestDto);
         FormularioPcd formValidado = procurarFormularioAtivo(email);
