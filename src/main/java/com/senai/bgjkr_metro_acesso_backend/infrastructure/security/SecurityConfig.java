@@ -18,7 +18,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMINISTRADOR")
@@ -43,10 +44,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/pcd/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/pcd/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
 
-                        .requestMatchers(HttpMethod.GET, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.POST, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/formulario/**").hasAnyRole("USUARIO_PCD", "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/formulario/**").hasAnyRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/formulario/**").hasAnyRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/formulario/**").hasAnyRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/formulario/**").hasAnyRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/api/estacao/**").hasAnyRole( "ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/estacao/**").hasRole("ADMINISTRADOR")
