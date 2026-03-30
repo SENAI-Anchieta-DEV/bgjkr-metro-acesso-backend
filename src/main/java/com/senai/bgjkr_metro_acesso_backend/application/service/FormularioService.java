@@ -37,6 +37,7 @@ public class FormularioService {
     @Transactional
     public FormSolicitacaoResponseDto registrarFormulario(FormSolicitacaoRequestDto requestDto) {
         usuarioService.impedirEmailAtivo(requestDto.email());
+        impedirNaoComprovado(requestDto.comprovacao());
         FormularioPcd formRegistrado = repository.findByEmail(requestDto.email())
                 .map(form -> reativarFormulario(requestDto, form))
                 .orElseGet(() -> criarFormulario(requestDto));
@@ -62,14 +63,15 @@ public class FormularioService {
     }
 
     @Transactional(readOnly = true)
-    public FormSolicitacaoResponseDto buscarFormularioAtivo(String email) {
-        return FormSolicitacaoResponseDto.fromEntity(procurarFormularioAtivo(email));
+    public FormAprovacaoResponseDto buscarFormularioAtivo(String email) {
+        return FormAprovacaoResponseDto.fromEntity(procurarFormularioAtivo(email));
     }
 
     // UPDATE
     @Transactional
     public FormSolicitacaoResponseDto atualizarFormularioPendente(String email, FormSolicitacaoRequestDto requestDto) {
         usuarioService.impedirEmailAtivo(requestDto.email());
+        impedirNaoComprovado(requestDto.comprovacao());
         FormularioPcd formAtualizado = procurarFormularioAtivo(email);
         impedirFormularioJaValidado(formAtualizado);
         atualizarSolicitacao(formAtualizado, requestDto);
@@ -97,6 +99,12 @@ public class FormularioService {
     }
 
     // Funções auxiliares
+    private void impedirNaoComprovado(MultipartFile comprovacao) {
+        if (comprovacao == null || comprovacao.isEmpty()) {
+            throw new RuntimeException("Arquivo de comprovação é obrigatório."); // Exception específica em futura feature
+        }
+    }
+
     private void impedirFormularioJaValidado(FormularioPcd formulario) {
         if (formulario.getStatus() != StatusFormulario.EM_ANALISE) {
             throw new IllegalArgumentException("Não é possível editar um formulário que não está em análise.");

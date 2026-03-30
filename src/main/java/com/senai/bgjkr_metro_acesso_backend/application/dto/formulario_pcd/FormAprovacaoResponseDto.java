@@ -15,7 +15,7 @@ public record FormAprovacaoResponseDto(
         Set<TipoDeficiencia> tiposDeficiencia,
         Boolean desejaSuporte,
         String motivoReprovacao,
-        AdminResponseDto adminResponseDto,
+        AdminResponseDto adminResponsavel,
         StatusFormulario status,
         boolean comprovado
 ) {
@@ -30,9 +30,11 @@ public record FormAprovacaoResponseDto(
                 formulario.getTiposDeficiencia(),
                 formulario.isDesejaSuporte(),
                 formulario.getMotivoReprovacao(),
-                AdminResponseDto.fromEntity(formulario.getAdminResponsavel()),
+                formulario.getAdminResponsavel() == null ?
+                        null :
+                        AdminResponseDto.fromEntity(formulario.getAdminResponsavel()),
                 formulario.getStatus(),
-                formulario.getComprovacaoId().isBlank()
+                !formulario.getComprovacaoId().isBlank()
         );
     }
 }

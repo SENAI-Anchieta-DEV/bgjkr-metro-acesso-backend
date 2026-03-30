@@ -43,7 +43,7 @@ public class FormularioController {
     }
 
     @GetMapping("/{email}")
-    public FormSolicitacaoResponseDto buscarFormularioAtivo(@PathVariable String email) {
+    public FormAprovacaoResponseDto buscarFormularioAtivo(@PathVariable String email) {
         return service.buscarFormularioAtivo(email);
     }
 
