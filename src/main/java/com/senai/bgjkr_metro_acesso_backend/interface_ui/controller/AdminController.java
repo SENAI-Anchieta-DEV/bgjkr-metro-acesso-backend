@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public class AdminController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<AdminResponseDto> registrarAdmin(@RequestBody AdminRequestDto requestDto) {
+    public ResponseEntity<AdminResponseDto> registrarAdmin(@RequestBody @Valid AdminRequestDto requestDto) {
         return ResponseEntity
                 .created(URI.create("api/admin"))
                 .body(service.registrarAdmin(requestDto));
@@ -46,7 +47,7 @@ public class AdminController {
 
     // UPDATE
     @PutMapping("/{email}")
-    public ResponseEntity<AdminResponseDto> atualizarAdmin(@PathVariable String email, @RequestBody AdminRequestDto requestDto) {
+    public ResponseEntity<AdminResponseDto> atualizarAdmin(@PathVariable String email, @RequestBody @Valid AdminRequestDto requestDto) {
         return ResponseEntity
         .ok(service.atualizarAdmin(email, requestDto));
     }
