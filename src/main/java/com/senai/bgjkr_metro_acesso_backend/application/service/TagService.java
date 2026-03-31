@@ -4,6 +4,8 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDt
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.tag_pcd.TagIndisponivelException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -74,13 +76,13 @@ public class TagService {
     protected TagPcd escolherTagDisponivel() {
         return repository
                 .findFirstByUsuarioPcdNull()
-                .orElseThrow(() -> new RuntimeException("Não há tag disponível.")); // Exception específica em futura feature
+                .orElseThrow(TagIndisponivelException::new);
     }
 
     protected TagPcd procurarTagAtiva(String codigoTag) {
         return repository
                 .findByCodigoTagAndAtivoTrue(codigoTag)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("TagPcd", "codigoTag", codigoTag));
     }
 
     private TagPcd reativarTag(TagPcd tag, TagRequestDto requestDto) {

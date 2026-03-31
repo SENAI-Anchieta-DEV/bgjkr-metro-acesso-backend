@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoReque
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Linha;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.EstacaoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,7 +72,7 @@ public class EstacaoService {
     protected Estacao procurarEstacaoAtiva(String codigoEstacao) {
         return repository
                 .findByCodigoEstacaoAndAtivoTrue(codigoEstacao)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Estacao", "codigoEstacao", codigoEstacao));
     }
 
     private Estacao reativarEstacao(Estacao estacao, EstacaoRequestDto requestDto) {

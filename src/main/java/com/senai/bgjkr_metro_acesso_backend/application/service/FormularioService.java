@@ -8,7 +8,17 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdReque
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Administrador;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.FormularioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusFormulario;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.AlterarFormularioPcdJaValidadoException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.ComprovacaoDeDeficienciaAusenteException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.FormularioPcdComEmailDeUsuarioAtivoException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.LeituraDeComprovacaoDeDeficienciaException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.MotivoReprovacaoAusenteException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.RegistroDeComprovacaoDeDeficienciaException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.RemocaoDeFormularioDePcdAtivoException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.auth.UsuarioNaoAutenticadoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.FormularioRepository;
+import com.senai.bgjkr_metro_acesso_backend.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -29,16 +39,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FormularioService {
     private final FormularioRepository repository;
+    private final UsuarioRepository usuarioRepository;
     private final AdminService adminService;
     private final TagService tagService;
     private final PcdService pcdService;
-    private final UsuarioService usuarioService;
 
     // CREATE
     @Transactional
     public FormSolicitacaoResponseDto registrarFormulario(FormSolicitacaoRequestDto requestDto) {
-        usuarioService.impedirEmailAtivo(requestDto.email());
-        impedirNaoComprovado(requestDto.comprovacao());
+        impedirEmailAtivo(requestDto.email());
+        impedirFormularioNaoComprovado(requestDto.comprovacao());
         FormularioPcd formRegistrado = repository.findByEmail(requestDto.email())
                 .map(form -> reativarFormulario(requestDto, form))
                 .orElseGet(() -> criarFormulario(requestDto));
@@ -75,8 +85,8 @@ public class FormularioService {
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public FormSolicitacaoResponseDto atualizarFormularioPendente(String email, FormSolicitacaoRequestDto requestDto) {
-        usuarioService.impedirEmailAtivo(requestDto.email());
-        impedirNaoComprovado(requestDto.comprovacao());
+        impedirEmailAtivo(requestDto.email());
+        impedirFormularioNaoComprovado(requestDto.comprovacao());
         FormularioPcd formAtualizado = procurarFormularioAtivo(email);
         impedirFormularioJaValidado(formAtualizado);
         atualizarSolicitacao(formAtualizado, requestDto);
@@ -106,45 +116,50 @@ public class FormularioService {
     }
 
     // Funções auxiliares
-    private void impedirNaoComprovado(MultipartFile comprovacao) {
+    protected void impedirEmailAtivo(String email) {
+        if (usuarioRepository.existsByEmailAndAtivoTrue(email)) {
+            throw new FormularioPcdComEmailDeUsuarioAtivoException();
+        }
+    }
+
+    private void impedirFormularioNaoComprovado(MultipartFile comprovacao) {
         if (comprovacao == null || comprovacao.isEmpty()) {
-            throw new RuntimeException("Arquivo de comprovação é obrigatório."); // Exception específica em futura feature
+            throw new ComprovacaoDeDeficienciaAusenteException();
         }
     }
 
     private void impedirFormularioJaValidado(FormularioPcd formulario) {
         if (formulario.getStatus() != StatusFormulario.EM_ANALISE) {
-            throw new IllegalArgumentException("Não é possível editar um formulário que não está em análise.");
+            throw new AlterarFormularioPcdJaValidadoException();
         }
     }
 
     private void impedirPcdAtivo(String email) {
         if (pcdService.existePcdAtivo(email)) {
-            throw new IllegalArgumentException("Não é possível remover o formulário de um usuário PcD ainda ativo."); // Exception específica em futura feature
+            throw new RemocaoDeFormularioDePcdAtivoException();
         }
     }
 
     private void impedirMotivoInvalido(FormAprovacaoRequestDto requestDto) {
         if (!requestDto.aprovado() && (requestDto.motivoReprovacao() == null || requestDto.motivoReprovacao().isBlank())) {
-            throw new IllegalArgumentException("Motivo é obrigatório para reprovação"); // Exception específica em futura feature
+            throw new MotivoReprovacaoAusenteException();
         }
     }
 
     private FormularioPcd procurarFormularioAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("FormularioPcd", "email", email));
     }
 
     private FormularioPcd reativarFormulario(FormSolicitacaoRequestDto requestDto, FormularioPcd formExistente) {
-        if (formExistente.getStatus() == StatusFormulario.APROVADO && formExistente.isAtivo()) {
-            throw new RuntimeException("Já existe um formulário aprovado ativo para esse email."); // Exception específica em futura feature
+        if (formExistente.getStatus() != StatusFormulario.APROVADO || !formExistente.isAtivo()) {
+            atualizarSolicitacao(formExistente, requestDto);
+            formExistente.setStatus(StatusFormulario.EM_ANALISE);
+            formExistente.setAdminResponsavel(null);
+            formExistente.setMotivoReprovacao(null);
+            formExistente.setAtivo(true);
         }
-        atualizarSolicitacao(formExistente, requestDto);
-        formExistente.setStatus(StatusFormulario.EM_ANALISE);
-        formExistente.setAdminResponsavel(null);
-        formExistente.setMotivoReprovacao(null);
-        formExistente.setAtivo(true);
         return formExistente;
     }
 
@@ -172,7 +187,7 @@ public class FormularioService {
 
     private String salvarComprovacao(MultipartFile comprovacao) {
         if (comprovacao == null || comprovacao.isEmpty()) {
-            throw new RuntimeException("Erro ao ler arquivo de comprovação."); // Exception específica em futura feature
+            throw new LeituraDeComprovacaoDeDeficienciaException();
         }
 
         String comprovacaoId;
@@ -184,7 +199,7 @@ public class FormularioService {
             Path comprovacaoPath = uploadPath.resolve(comprovacaoId);
             Files.write(comprovacaoPath, comprovacao.getBytes());
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao salvar comprovacao."); // Exception específica em futura feature
+            throw new RegistroDeComprovacaoDeDeficienciaException();
         }
 
         return comprovacaoId;
@@ -193,7 +208,7 @@ public class FormularioService {
     private Administrador buscarAdministradorResponsavel() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
-            throw new IllegalArgumentException("O usuário que solicitou a ação não está autenticado."); // Exception específica em futura feature
+            throw new UsuarioNaoAutenticadoException();
         }
         return adminService.procurarAdminAtivo(auth.getName());
     }
@@ -203,7 +218,7 @@ public class FormularioService {
             pcdService.registrarPcd(new PcdRequestDto(
                     formulario.getNome(),
                     email,
-                    formulario.getSenha(), // SENHA JÁ ESTÁ CRIPTOGRAFADA!
+                    formulario.getSenha(), // Senha já está criptografada!
                     new HashSet<>(formulario.getTiposDeficiencia()),
                     formulario.isDesejaSuporte(),
                     tagService.escolherTagDisponivel().getCodigoTag()
