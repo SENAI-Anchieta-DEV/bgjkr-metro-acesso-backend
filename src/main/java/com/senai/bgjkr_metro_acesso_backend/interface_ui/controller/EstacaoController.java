@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.EstacaoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public class EstacaoController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<EstacaoResponseDto> registrarEstacao(@RequestBody EstacaoRequestDto requestDto) {
+    public ResponseEntity<EstacaoResponseDto> registrarEstacao(@RequestBody @Valid EstacaoRequestDto requestDto) {
         return ResponseEntity
                 .created(URI.create("api/estacao"))
                 .body(service.registrarEstacao(requestDto));
@@ -46,7 +47,7 @@ public class EstacaoController {
 
     // UPDATE
     @PutMapping("/{codigo}")
-    public ResponseEntity<EstacaoResponseDto> atualizarEstacao(@PathVariable String codigo, @RequestBody EstacaoRequestDto requestDto) {
+    public ResponseEntity<EstacaoResponseDto> atualizarEstacao(@PathVariable String codigo, @RequestBody @Valid EstacaoRequestDto requestDto) {
         return ResponseEntity
                 .ok(service.atualizarEstacao(codigo, requestDto));
     }

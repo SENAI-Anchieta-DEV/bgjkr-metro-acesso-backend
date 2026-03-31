@@ -5,8 +5,10 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormA
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormSolicitacaoRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormSolicitacaoResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.FormularioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -27,42 +30,52 @@ public class FormularioController {
 
     // CREATE
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public FormSolicitacaoResponseDto registrarFormulario(@ModelAttribute FormSolicitacaoRequestDto requestDto) {
-        return service.registrarFormulario(requestDto);
+    public ResponseEntity<FormSolicitacaoResponseDto> registrarFormulario(@ModelAttribute FormSolicitacaoRequestDto requestDto) {
+        return ResponseEntity
+                .created(URI.create("api/formulario"))
+                .body(service.registrarFormulario(requestDto));
     }
 
     // READ
     @GetMapping
-    public List<FormAprovacaoResponseDto> listarFormulariosAtivos() {
-        return service.listarFormulariosAtivos();
+    public ResponseEntity<List<FormAprovacaoResponseDto>> listarFormulariosAtivos() {
+        return ResponseEntity
+                .ok(service.listarFormulariosAtivos());
     }
 
     @GetMapping("/pendentes")
-    public List<FormSolicitacaoResponseDto> listarFormulariosPendentes() {
-        return service.listarFormulariosPendentes();
+    public ResponseEntity<List<FormSolicitacaoResponseDto>> listarFormulariosPendentes() {
+        return ResponseEntity
+                .ok(service.listarFormulariosPendentes());
     }
 
     @GetMapping("/{email}")
-    public FormAprovacaoResponseDto buscarFormularioAtivo(@PathVariable String email) {
-        return service.buscarFormularioAtivo(email);
+    public ResponseEntity<FormAprovacaoResponseDto> buscarFormularioAtivo(@PathVariable String email) {
+        return ResponseEntity
+                .ok(service.buscarFormularioAtivo(email));
     }
 
     // UPDATE
     @PutMapping(path = "/pendentes/{email}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public FormSolicitacaoResponseDto atualizarFormularioPendente(@PathVariable String email, @ModelAttribute FormSolicitacaoRequestDto requestDto) {
-        return service.atualizarFormularioPendente(email, requestDto);
+    public ResponseEntity<FormSolicitacaoResponseDto> atualizarFormularioPendente(@PathVariable String email, @ModelAttribute FormSolicitacaoRequestDto requestDto) {
+        return ResponseEntity
+                .ok(service.atualizarFormularioPendente(email, requestDto));
     }
 
     // DELETE
     @DeleteMapping("/pendentes/{email}")
-    public void removerFormularioPendente(@PathVariable String email) {
+    public ResponseEntity<Void> removerFormularioPendente(@PathVariable String email) {
         service.removerFormularioPendente(email);
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     // REQUISITOS FUNCIONAIS
     @PostMapping("/validar/{email}")
-    public FormAprovacaoResponseDto validarFormulario(@PathVariable String email, @RequestBody FormAprovacaoRequestDto requestDto) {
-        return service.validarFormulario(email, requestDto);
+    public ResponseEntity<FormAprovacaoResponseDto> validarFormulario(@PathVariable String email, @RequestBody @Valid FormAprovacaoRequestDto requestDto) {
+        return ResponseEntity
+                .ok(service.validarFormulario(email, requestDto));
     }
 }
 
