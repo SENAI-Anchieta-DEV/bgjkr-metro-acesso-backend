@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.A
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.AgenteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,7 +76,7 @@ public class AgenteService {
     private AgenteAtendimento procurarAgenteAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("AgenteAtendimento", "email", email));
     }
 
     private AgenteAtendimento reativarAgente(AgenteAtendimento agente, AgenteRequestDto requestDto) {

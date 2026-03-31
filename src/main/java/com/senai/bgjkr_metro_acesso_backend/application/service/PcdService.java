@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdReque
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.FormularioRepository;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PcdRepository;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +81,7 @@ public class PcdService {
     protected UsuarioPcd procurarPcdAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("UsuarioPcd", "email", email));
     }
 
     protected boolean existePcdAtivo(String email) {

@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorRequest
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,7 +76,7 @@ public class SensorService {
     private Sensor procurarSensorAtivo(String codigoSensor) {
         return repository
                 .findByCodigoSensorAndAtivoTrue(codigoSensor)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Sensor", "codigoSensor", codigoSensor));
     }
 
     private Sensor reativarSensor(Sensor sensor, SensorRequestDto requestDto) {

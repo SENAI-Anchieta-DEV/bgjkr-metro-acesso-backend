@@ -3,6 +3,8 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.authentication.AuthRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.authentication.AuthResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Usuario;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.auth.CredenciaisInvalidasException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.UsuarioRepository;
 import com.senai.bgjkr_metro_acesso_backend.infrastructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,9 @@ public class AuthService {
 
     public AuthResponseDto login(AuthRequestDto requestDto) {
         Usuario usuario = usuarioRepository.findByEmail(requestDto.email())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado.")); //Exception Especifica
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Usuario", "email", requestDto.email()));
         if (!requestDto.senha().equals(usuario.getSenha())) {
-            throw new RuntimeException("Credenciais inválidas."); //Exception Especifica
+            throw new CredenciaisInvalidasException();
         }
 
         return new AuthResponseDto(

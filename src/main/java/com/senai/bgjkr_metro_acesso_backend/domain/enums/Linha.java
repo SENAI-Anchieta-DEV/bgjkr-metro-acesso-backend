@@ -1,5 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.enums;
 
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.estacao.NumeroDeLinhaInvalidaException;
 import lombok.Getter;
 
 import java.util.Set;
@@ -48,6 +49,6 @@ public enum Linha {
                 return linha;
             }
         }
-        throw new IllegalArgumentException("Número de linha inválido: " + numero); // exception específica em futura task
+        throw new NumeroDeLinhaInvalidaException(numero);
     }
 }

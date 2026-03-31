@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Administrador;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -66,7 +67,7 @@ public class AdminService {
     protected Administrador procurarAdminAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
-                .orElseThrow(() -> new RuntimeException("Entidade não encontrada.")); // Exception específica em futura feature
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Administrador", "email", email));
     }
 
     private Administrador reativarAdmin(Administrador admin, AdminRequestDto requestDto) {
