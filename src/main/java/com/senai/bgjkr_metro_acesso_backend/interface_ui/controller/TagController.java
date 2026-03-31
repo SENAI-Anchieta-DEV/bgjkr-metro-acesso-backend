@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.TagService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class TagController {
 
    // CREATE
     @PostMapping
-    public ResponseEntity<TagResponseDto> registrarTag(@RequestBody TagRequestDto requestDto) {
+    public ResponseEntity<TagResponseDto> registrarTag(@RequestBody @Valid TagRequestDto requestDto) {
         return ResponseEntity
                 .created(URI.create("api/tag"))
                 .body(service.registrarTag(requestDto));
@@ -39,7 +40,7 @@ public class TagController {
 
     // UPDATE
     @PutMapping("/{codigoTag}")
-    public ResponseEntity<TagResponseDto> atualizarTag(@PathVariable String codigoTag, @RequestBody TagRequestDto requestDto) {
+    public ResponseEntity<TagResponseDto> atualizarTag(@PathVariable String codigoTag, @RequestBody @Valid TagRequestDto requestDto) {
         return ResponseEntity
                 .ok(service.atualizarTag(codigoTag, requestDto));
     }

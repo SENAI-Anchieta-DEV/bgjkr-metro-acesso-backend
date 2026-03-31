@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.PcdService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public class PcdController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<PcdResponseDto> registrarPcd(@RequestBody PcdRequestDto requestDto) {
+    public ResponseEntity<PcdResponseDto> registrarPcd(@RequestBody @Valid PcdRequestDto requestDto) {
         return ResponseEntity
                 .created(URI.create("api/pcd"))
                 .body(service.registrarPcd(requestDto));
@@ -46,7 +47,7 @@ public class PcdController {
 
     // UPDATE
     @PutMapping("/{email}")
-    public ResponseEntity<PcdResponseDto> atualizarPcd(@PathVariable String email, @RequestBody PcdRequestDto requestDto) {
+    public ResponseEntity<PcdResponseDto> atualizarPcd(@PathVariable String email, @RequestBody @Valid PcdRequestDto requestDto) {
         return ResponseEntity
                 .ok(service.atualizarPcd(email, requestDto));
     }
@@ -58,7 +59,6 @@ public class PcdController {
         return ResponseEntity
                 .noContent()
                 .build();
-
     }
 }
 

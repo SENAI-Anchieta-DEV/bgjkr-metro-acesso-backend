@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AgenteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public class AgenteController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<AgenteResponseDto> registrarAgente(@RequestBody AgenteRequestDto requestDto) {
+    public ResponseEntity<AgenteResponseDto> registrarAgente(@RequestBody @Valid AgenteRequestDto requestDto) {
         return ResponseEntity
                 .created(URI.create("api/agente"))
                 .body(service.registrarAgente(requestDto));
@@ -46,7 +47,7 @@ public class AgenteController {
 
     // UPDATE
     @PutMapping("/{email}")
-    public ResponseEntity<AgenteResponseDto> atualizarAgente(@PathVariable String email, @RequestBody AgenteRequestDto requestDto) {
+    public ResponseEntity<AgenteResponseDto> atualizarAgente(@PathVariable String email, @RequestBody @Valid AgenteRequestDto requestDto) {
         return ResponseEntity
                 .ok(service.atualizarAgente(email, requestDto));
     }

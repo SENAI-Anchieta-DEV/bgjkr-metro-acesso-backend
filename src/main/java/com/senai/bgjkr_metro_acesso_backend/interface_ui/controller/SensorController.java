@@ -3,6 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.SensorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,7 @@ public class SensorController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<SensorResponseDto> registrarSensor(@RequestBody SensorRequestDto requestDto) {
+    public ResponseEntity<SensorResponseDto> registrarSensor(@RequestBody @Valid SensorRequestDto requestDto) {
         return ResponseEntity
                 .created(URI.create("api/sensor"))
                 .body(service.registrarSensor(requestDto));
@@ -46,7 +47,7 @@ public class SensorController {
 
     // UPDATE
     @PutMapping("/{codigoSensor}")
-    public ResponseEntity<SensorResponseDto> atualizarSensor(@PathVariable String codigoSensor, @RequestBody SensorRequestDto requestDto) {
+    public ResponseEntity<SensorResponseDto> atualizarSensor(@PathVariable String codigoSensor, @RequestBody @Valid SensorRequestDto requestDto) {
         return ResponseEntity
                 .ok(service.atualizarSensor(codigoSensor, requestDto));
     }
