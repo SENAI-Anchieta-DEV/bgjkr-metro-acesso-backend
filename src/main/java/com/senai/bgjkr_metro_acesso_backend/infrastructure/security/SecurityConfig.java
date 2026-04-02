@@ -65,6 +65,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/tag/**").hasRole("ADMINISTRADOR")
 
+                        .requestMatchers(HttpMethod.POST, "/iot/simular/**").hasRole("ADMINISTRADOR")
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
