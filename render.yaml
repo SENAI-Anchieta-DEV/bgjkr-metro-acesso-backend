@@ -1,9 +1,3 @@
-databases:
-  - name: metro-acesso-db
-    plan: free
-    databaseName: metro_acesso
-    user: metro_acesso_user
-
 services:
   - type: web
     name: metro-acesso-backend
@@ -65,3 +59,9 @@ services:
       # MQTT (preencher manualmente se necessário em produção)
       - key: MQTT_BROKER_URL
         sync: false
+
+databases:
+  - name: metro-acesso-db
+    plan: free
+    databaseName: metro_acesso
+    user: metro_acesso_user
