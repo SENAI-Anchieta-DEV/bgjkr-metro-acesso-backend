@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 
 import java.net.URI;
+import java.time.Instant;
 
 public class ProblemDetailUtils {
 
@@ -12,6 +13,7 @@ public class ProblemDetailUtils {
         problem.setTitle(title);
         problem.setDetail(detail);
         problem.setInstance(URI.create(path));
+        problem.setProperty("timestamp", Instant.now());
         return problem;
     }
 }
