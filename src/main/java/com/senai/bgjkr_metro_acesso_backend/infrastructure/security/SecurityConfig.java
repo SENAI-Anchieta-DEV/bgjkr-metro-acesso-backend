@@ -30,15 +30,14 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/error",
+                                "/favicon.ico",
+                                "/actuator/health",
                                 "/auth/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/h2-console/**",
-                                "/actuator/health"
+                                "/v3/api-docs/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
+                        .anyRequest().authenticated()
 
                         .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMINISTRADOR")
