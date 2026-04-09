@@ -27,7 +27,17 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
 
-                        .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/error", "/h2-console", "/actuator/health").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/error",
+                                "/auth/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/h2-console/**",
+                                "/actuator/health"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMINISTRADOR")
