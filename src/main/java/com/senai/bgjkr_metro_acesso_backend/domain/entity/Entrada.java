@@ -49,8 +49,8 @@ public class Entrada {
     @Column(nullable = false, length = 50)
     private String codigoEntrada;
 
-    @Column
-    private String porta;
+    @OneToMany(mappedBy = "entrada")
+    private List<PendenciaAtendimento> pendencias;
 
     @Column(nullable = false)
     private boolean ativo;
