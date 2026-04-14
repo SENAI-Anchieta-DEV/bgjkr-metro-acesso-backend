@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -73,6 +74,10 @@ public class AgenteService {
     }
 
     // Funções auxiliares
+    protected List<AgenteAtendimento> procurarAgentesDisponiveis(Estacao estacao, LocalTime hora){
+        return repository.findByEstacaoAndHorarioNoTurno(estacao, hora);
+    }
+
     private AgenteAtendimento procurarAgenteAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
