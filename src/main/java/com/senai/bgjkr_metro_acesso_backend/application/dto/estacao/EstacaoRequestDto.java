@@ -30,7 +30,7 @@ public record EstacaoRequestDto(
                 .codigoEstacao(codigoEstacao)
                 .linhas(Linha.fromNumeros(linhas))
                 .agentes(new ArrayList<>())
-                .sensores(new ArrayList<>())
+                .entradas(new ArrayList<>())
                 .ativo(true)
                 .build();
     }

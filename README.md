@@ -18,7 +18,7 @@ O **MetroAcesso** propõe automatizar esse processo: quando um usuário PcD entr
 - Identificação automática do PcD na entrada da estação via tag
 - Notificação automática de agentes disponíveis (apenas para usuários que desejam suporte)
 - Confirmação de atendimento pelos agentes
-- Gestão de administradores, agentes, estações, sensores e tags
+- Gestão de administradores, agentes, estações, entradas e tags
 - Fluxo de solicitação e aprovação de cadastro via formulário com comprovação de deficiência
 
 ---
