@@ -49,9 +49,13 @@ services:
       - key: ADMIN_SENHA
         sync: false
 
-      # CORS e URL pública
-      - key: APP_CORS_ALLOWED_ORIGINS
-        sync: false
+      # CORS
+      - key: APP_CORS_ALLOWED_ORIGINS_0
+        value: "http://localhost:5173"
+      - key: APP_CORS_ALLOWED_ORIGINS_1
+        value: "https://metro-acesso-frontend.firebaseapp.com"
+      - key: APP_CORS_ALLOWED_ORIGINS_2
+        value: "https://metro-acesso-frontend.web.app"
 
       - key: APP_PUBLIC_BASE_URL
         sync: false
