@@ -51,12 +51,11 @@ services:
 
       # CORS
       - key: APP_CORS_ALLOWED_ORIGINS_0
-        value: "http://localhost:5173"
+        sync: false
       - key: APP_CORS_ALLOWED_ORIGINS_1
-        value: "https://metro-acesso-frontend.firebaseapp.com"
+        sync: false
       - key: APP_CORS_ALLOWED_ORIGINS_2
-        value: "https://metro-acesso-frontend.web.app"
-
+        sync: false
       - key: APP_PUBLIC_BASE_URL
         sync: false
 
