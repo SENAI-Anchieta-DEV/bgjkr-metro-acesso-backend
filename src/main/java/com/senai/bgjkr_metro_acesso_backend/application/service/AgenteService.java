@@ -78,7 +78,7 @@ public class AgenteService {
         return repository.findByEstacaoAndHorarioNoTurno(estacao, hora);
     }
 
-    private AgenteAtendimento procurarAgenteAtivo(String email) {
+    protected AgenteAtendimento procurarAgenteAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("AgenteAtendimento", "email", email));

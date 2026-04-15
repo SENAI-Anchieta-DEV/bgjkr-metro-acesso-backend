@@ -1,4 +1,4 @@
-package com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia;
+package com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento;
 
 public class AgenteIndisponivelParaAtendimentoException extends RuntimeException {
     public AgenteIndisponivelParaAtendimentoException() {

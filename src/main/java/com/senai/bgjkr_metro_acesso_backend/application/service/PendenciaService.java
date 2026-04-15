@@ -1,17 +1,15 @@
 package com.senai.bgjkr_metro_acesso_backend.application.service;
 
-import com.senai.bgjkr_metro_acesso_backend.application.dto.IdentificacaoDto;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia.AgenteIndisponivelParaAtendimentoException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -53,5 +51,66 @@ public class PendenciaService {
                 .statusAtendimento(StatusAtendimento.PENDENTE)
                 .build()
         );
+    }
+
+    public void confirmarAtendimento(String id) {
+        procurarPendenciaAtiva(id).setStatusAtendimento(StatusAtendimento.CONCLUIDO);
+    }
+
+    protected PendenciaAtendimento procurarPendenciaAtiva(String id) {
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("PendenciaAtendimento", "id", id));
+    }
+
+
+    public List<PendenciaResponseDto> listarPendenciasAtivas() {
+        return repository
+                .findAllByAtivoTrue()
+                .stream()
+                .map(PendenciaResponseDto::fromEntity)
+                .toList();
+    }
+
+    @GetMapping("/agente/{email}")
+    public List<PendenciaResponseDto> listarPendenciasDoAgente(String email) {
+        AgenteAtendimento agente = agenteService.procurarAgenteAtivo(email);
+        return repository
+                .findAllByAgenteAndAtivoTrue(agente)
+                .stream()
+                .map(PendenciaResponseDto::fromEntity)
+                .toList();
+    }
+
+    @GetMapping("/estacao/{codigoEstacao}")
+    public List<PendenciaResponseDto> listarPendenciasPorEstacao(String codigoEstacao) {
+        Estacao estacao = estacaoService.procurarEstacaoAtiva(codigoEstacao);
+        return repository
+                .findAllByEstacaoAndAtivoTrue(estacao)
+                .stream()
+                .map(PendenciaResponseDto::fromEntity)
+                .toList();
+    }
+
+    public void removerPendencia(String id) {
+        PendenciaAtendimento pendenciaRemovida = procurarPendenciaAtiva(id);
+
+        UsuarioPcd pcdVinculado = pendenciaRemovida.getPcdAtendido();
+        pcdVinculado.getPendencias().remove(pendenciaRemovida);
+        pendenciaRemovida.setPcdAtendido(null);
+
+        AgenteAtendimento agenteVinculado = pendenciaRemovida.getAgente();
+        agenteVinculado.getPendencias().remove(pendenciaRemovida);
+        pendenciaRemovida.setAgente(null);
+
+        Estacao estacaoVinculada = pendenciaRemovida.getEstacao();
+        estacaoVinculada.getPendencias().remove(pendenciaRemovida);
+        pendenciaRemovida.setEstacao(null);
+
+        Entrada entradaVinculada = pendenciaRemovida.getEntrada();
+        entradaVinculada.getPendencias().remove(pendenciaRemovida);
+        pendenciaRemovida.setEntrada(null);
+
+        repository.delete(pendenciaRemovida);
     }
 }

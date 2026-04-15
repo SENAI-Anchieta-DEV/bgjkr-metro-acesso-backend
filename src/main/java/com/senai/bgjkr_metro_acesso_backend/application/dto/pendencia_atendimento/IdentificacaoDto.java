@@ -1,4 +1,4 @@
-package com.senai.bgjkr_metro_acesso_backend.application.dto;
+package com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

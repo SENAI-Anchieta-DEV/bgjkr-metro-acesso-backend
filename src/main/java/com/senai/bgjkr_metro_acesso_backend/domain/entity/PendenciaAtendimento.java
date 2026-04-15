@@ -1,15 +1,7 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -49,8 +41,10 @@ public class PendenciaAtendimento {
     @ManyToOne
     @JoinColumn(name = "entrada_id")
     private Entrada entrada;
-    
+
+    @Column(nullable = false)
     private LocalDateTime dataHora;
 
+    @Column(nullable = false)
     private StatusAtendimento statusAtendimento;
 }
