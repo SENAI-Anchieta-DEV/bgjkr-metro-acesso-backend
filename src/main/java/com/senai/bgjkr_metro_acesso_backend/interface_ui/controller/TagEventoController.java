@@ -5,7 +5,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.service.TagEventoService
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/iot")
+@RequestMapping("/tag")
 public class TagEventoController {
 
     private final TagEventoService service;
@@ -15,7 +15,7 @@ public class TagEventoController {
     }
 
     @GetMapping("/ultimo")
-    public TagEventoDTO getUltimo() {
+    public TagEventoDTO getUltimoEvento() {
         return service.getUltimoEvento();
     }
 }

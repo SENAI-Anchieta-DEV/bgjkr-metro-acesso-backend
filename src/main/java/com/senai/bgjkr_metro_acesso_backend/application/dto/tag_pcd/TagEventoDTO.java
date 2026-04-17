@@ -7,15 +7,35 @@ public class TagEventoDTO {
     private String porta;
     private long timestamp;
 
-    public String getCodigoTag() { return codigoTag; }
-    public void setCodigoTag(String codigoTag) { this.codigoTag = codigoTag; }
+    public String getCodigoTag() {
+        return codigoTag;
+    }
 
-    public String getCodigoEstacao() { return codigoEstacao; }
-    public void setCodigoEstacao(String codigoEstacao) { this.codigoEstacao = codigoEstacao; }
+    public void setCodigoTag(String codigoTag) {
+        this.codigoTag = codigoTag;
+    }
 
-    public String getPorta() { return porta; }
-    public void setPorta(String porta) { this.porta = porta; }
+    public String getCodigoEstacao() {
+        return codigoEstacao;
+    }
 
-    public long getTimestamp() { return timestamp; }
-    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    public void setCodigoEstacao(String codigoEstacao) {
+        this.codigoEstacao = codigoEstacao;
+    }
+
+    public String getPorta() {
+        return porta;
+    }
+
+    public void setPorta(String porta) {
+        this.porta = porta;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 }

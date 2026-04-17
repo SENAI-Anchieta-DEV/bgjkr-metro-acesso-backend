@@ -9,11 +9,9 @@ public class TagEventoService {
     private TagEventoDTO ultimoEvento;
 
     public void processarEvento(TagEventoDTO evento) {
-        System.out.println("🚇 Evento recebido:");
 
-        System.out.println("Tag: " + evento.getCodigoTag());
-        System.out.println("Estação: " + evento.getCodigoEstacao());
-        System.out.println("Porta: " + evento.getPorta());
+        System.out.println(" Evento recebido no service:");
+        System.out.println(evento.getCodigoTag());
 
         this.ultimoEvento = evento;
     }

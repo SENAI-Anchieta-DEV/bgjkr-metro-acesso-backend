@@ -20,18 +20,25 @@ public class MqttSubscriber {
     @PostConstruct
     public void init() {
         try {
+
             MqttClient client = new MqttClient(
-                    "tcp://broker.hivemq.com:1883",
+                    "tcp://localhost:1883",
                     MqttClient.generateClientId()
             );
 
-            client.connect();
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+
+            client.connect(options);
+
+            System.out.println(" MQTT conectado (Render)");
 
             client.subscribe("metro/tag/entrada", (topic, msg) -> {
 
                 String payload = new String(msg.getPayload());
 
-                System.out.println("📡 MQTT recebido:");
+                System.out.println(" MQTT recebido:");
                 System.out.println(payload);
 
                 try {
@@ -41,11 +48,13 @@ public class MqttSubscriber {
                     service.processarEvento(evento);
 
                 } catch (Exception e) {
-                    System.out.println("❌ Erro ao converter JSON");
+                    System.out.println(" Erro ao converter JSON");
+                    e.printStackTrace();
                 }
             });
 
         } catch (Exception e) {
+            System.out.println(" Erro MQTT");
             e.printStackTrace();
         }
     }
