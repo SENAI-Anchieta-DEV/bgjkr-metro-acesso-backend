@@ -1,0 +1,70 @@
+services:
+  - type: web
+    name: metro-acesso-backend
+    runtime: docker
+    plan: free
+    autoDeployTrigger: commit
+    dockerfilePath: ./Dockerfile
+
+    healthCheckPath: /actuator/health/readiness
+
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # Banco de dados PostgreSQL (provisionado automaticamente pelo Render)
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: metro-acesso-db
+          property: host
+
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: metro-acesso-db
+          property: port
+
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: metro-acesso-db
+          property: database
+
+      - key: DATABASE_USER
+        fromDatabase:
+          name: metro-acesso-db
+          property: user
+
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: metro-acesso-db
+          property: password
+
+      # JWT
+      - key: JWT_SECRET
+        generateValue: true
+
+      # Admin provisório
+      - key: ADMIN_EMAIL
+        value: admin@senai.com
+
+      - key: ADMIN_SENHA
+        sync: false
+
+      # CORS
+      - key: APP_CORS_ALLOWED_ORIGINS_0
+        sync: false
+      - key: APP_CORS_ALLOWED_ORIGINS_1
+        sync: false
+      - key: APP_CORS_ALLOWED_ORIGINS_2
+        sync: false
+      - key: APP_PUBLIC_BASE_URL
+        sync: false
+
+      # MQTT (preencher manualmente se necessário em produção)
+      - key: MQTT_BROKER_URL
+        sync: false
+
+databases:
+  - name: metro-acesso-db
+    plan: free
+    databaseName: metro_acesso
+    user: metro_acesso_user
