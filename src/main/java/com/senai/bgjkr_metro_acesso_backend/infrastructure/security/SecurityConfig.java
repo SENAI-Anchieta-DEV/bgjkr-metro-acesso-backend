@@ -49,6 +49,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMINISTRADOR")
@@ -83,8 +85,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.PUT, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/tag/**").hasRole("ADMINISTRADOR")
-
-                        .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
 
                         .anyRequest().authenticated()
                 )
