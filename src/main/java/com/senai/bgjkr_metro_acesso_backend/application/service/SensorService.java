@@ -93,7 +93,6 @@ public class SensorService {
     private void atualizarValores(Sensor sensor, SensorRequestDto requestDto) {
         sensor.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
         sensor.setCodigoSensor(requestDto.codigoSensor());
-        sensor.setPorta(requestDto.porta());
     }
 }
 
