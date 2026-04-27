@@ -1,7 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.application.dto.entrada;
 
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Sensor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +16,7 @@ public record EntradaRequestDto(
         @Schema(description = "Identificação única da entrada.", example = "ENTRADA-100X")
         @NotBlank
         @Size(max = 200)
-        String codigoSensor
+        String codigoEntrada
 ) {
     public Entrada toEntity(
             Estacao estacao
