@@ -9,6 +9,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,4 +41,7 @@ public class UsuarioPcd extends Usuario {
     @OneToOne
     @JoinColumn(name = "tag_id", unique = true)
     private TagPcd tag;
+
+    @OneToMany(mappedBy = "pcdAtendido")
+    private List<PendenciaAtendimento> pendencias;
 }
