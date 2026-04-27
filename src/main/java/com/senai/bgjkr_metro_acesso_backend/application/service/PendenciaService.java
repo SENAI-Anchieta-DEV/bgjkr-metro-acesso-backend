@@ -9,7 +9,6 @@ import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimen
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -72,7 +71,6 @@ public class PendenciaService {
                 .toList();
     }
 
-    @GetMapping("/agente/{email}")
     public List<PendenciaResponseDto> listarPendenciasDoAgente(String email) {
         AgenteAtendimento agente = agenteService.procurarAgenteAtivo(email);
         return repository
@@ -82,7 +80,6 @@ public class PendenciaService {
                 .toList();
     }
 
-    @GetMapping("/estacao/{codigoEstacao}")
     public List<PendenciaResponseDto> listarPendenciasPorEstacao(String codigoEstacao) {
         Estacao estacao = estacaoService.procurarEstacaoAtiva(codigoEstacao);
         return repository

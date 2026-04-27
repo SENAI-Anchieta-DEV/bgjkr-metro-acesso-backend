@@ -29,7 +29,7 @@ public class PendenciaController {
     @GetMapping("/estacao/{codigoEstacao}")
     public ResponseEntity<List<PendenciaResponseDto>> listarPendenciasPorEstacao(@PathVariable String codigoEstacao) {
         return ResponseEntity
-                .ok(service.listarPendenciasDoAgente(codigoEstacao));
+                .ok(service.listarPendenciasPorEstacao(codigoEstacao));
     }
 
     @DeleteMapping("/{id}")
