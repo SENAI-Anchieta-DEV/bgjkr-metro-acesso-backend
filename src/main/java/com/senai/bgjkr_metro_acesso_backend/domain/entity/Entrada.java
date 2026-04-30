@@ -10,6 +10,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,12 +31,12 @@ import lombok.Setter;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(
-        name = "sensores",
+        name = "entradas",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "codigoSensor")
+                @UniqueConstraint(columnNames = "codigoEntrada")
         }
 )
-public class Sensor {
+public class Entrada {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
@@ -44,10 +47,10 @@ public class Sensor {
     private Estacao estacao;
 
     @Column(nullable = false, length = 50)
-    private String codigoSensor;
+    private String codigoEntrada;
 
-    @Column
-    private String porta;
+    @OneToMany(mappedBy = "entrada")
+    private List<PendenciaAtendimento> pendencias;
 
     @Column(nullable = false)
     private boolean ativo;

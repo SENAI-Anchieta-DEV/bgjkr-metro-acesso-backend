@@ -38,7 +38,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers(
                                 "/",
                                 "/error",
@@ -49,6 +48,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/api/formulario").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMINISTRADOR")
@@ -75,10 +76,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/estacao/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.DELETE, "/api/estacao/**").hasRole("ADMINISTRADOR")
 
-                        .requestMatchers(HttpMethod.GET, "/api/sensor/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.POST, "/api/sensor/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/sensor/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/sensor/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/entrada/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/entrada/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/entrada/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/entrada/**").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/api/tag/**").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.POST, "/api/tag/**").hasRole("ADMINISTRADOR")

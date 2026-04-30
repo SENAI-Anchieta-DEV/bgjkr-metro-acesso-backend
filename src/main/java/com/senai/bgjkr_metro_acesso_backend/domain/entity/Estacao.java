@@ -63,7 +63,10 @@ public class Estacao {
     private List<AgenteAtendimento> agentes;
 
     @OneToMany(mappedBy = "estacao")
-    private List<Sensor> sensores;
+    private List<Entrada> entradas;
+
+    @OneToMany(mappedBy = "estacao")
+    private List<PendenciaAtendimento> pendencias;
 
     @Column(nullable = false)
     private boolean ativo;
