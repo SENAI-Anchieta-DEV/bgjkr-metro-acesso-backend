@@ -47,4 +47,7 @@ public class PendenciaAtendimento {
 
     @Column(nullable = false)
     private StatusAtendimento statusAtendimento;
+
+    @Column(nullable = false)
+    private boolean ativo;
 }
