@@ -1,6 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
-import com.senai.bgjkr_metro_acesso_backend.application.service.EventoService;
+import com.senai.bgjkr_metro_acesso_backend.application.service.IdentificacaoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,10 +8,10 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/iot")
-public class EventoController {
-    private final EventoService service;
+public class IdentificacaoController {
+    private final IdentificacaoService service;
 
-    public EventoController(EventoService service) {
+    public IdentificacaoController(IdentificacaoService service) {
         this.service = service;
     }
 

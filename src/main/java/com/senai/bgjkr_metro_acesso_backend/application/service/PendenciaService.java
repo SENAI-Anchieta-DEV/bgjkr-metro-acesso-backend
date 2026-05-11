@@ -31,7 +31,7 @@ public class PendenciaService {
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void criarPendencia(IdentificacaoDto dto) {
-        TagPcd tag = tagService.procurarTagAtiva(dto.codigotTag());
+        TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
         Entrada entrada = entradaService.procurarEntradaAtiva(dto.codigoEntrada());

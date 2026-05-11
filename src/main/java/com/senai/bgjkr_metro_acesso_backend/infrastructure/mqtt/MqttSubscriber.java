@@ -1,7 +1,7 @@
 package com.senai.bgjkr_metro_acesso_backend.infrastructure.mqtt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagEventoDTO;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.TagEventoService;
 import jakarta.annotation.PostConstruct;
 import org.eclipse.paho.client.mqttv3.*;
@@ -42,11 +42,8 @@ public class MqttSubscriber {
                 System.out.println(payload);
 
                 try {
-                    TagEventoDTO evento =
-                            objectMapper.readValue(payload, TagEventoDTO.class);
-
-                    service.processarEvento(evento);
-
+                    IdentificacaoDto identificacao = objectMapper.readValue(payload, IdentificacaoDto.class);
+                    service.processarEvento(identificacao);
                 } catch (Exception e) {
                     System.out.println(" Erro ao converter JSON");
                     e.printStackTrace();

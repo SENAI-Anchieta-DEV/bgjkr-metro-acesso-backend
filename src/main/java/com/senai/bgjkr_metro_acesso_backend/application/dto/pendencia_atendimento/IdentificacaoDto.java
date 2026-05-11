@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 public record IdentificacaoDto(
         @NotBlank
         @Size(max = 200)
-        String codigotTag,
+        String codigoTag,
 
         @NotBlank
         @Size(max = 200)
