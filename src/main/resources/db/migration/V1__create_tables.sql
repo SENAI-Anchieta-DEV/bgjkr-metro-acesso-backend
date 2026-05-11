@@ -101,14 +101,13 @@ CREATE TABLE formularios_tipos_deficiencia (
 );
 
 -- ========================
---        SENSORES
+--        ENTRADAS
 -- ========================
-CREATE TABLE sensores (
+CREATE TABLE entradas (
                           id            VARCHAR(36) NOT NULL PRIMARY KEY,
                           estacao_id    VARCHAR(36),
-                          codigo_sensor VARCHAR(50) NOT NULL,
-                          porta         VARCHAR(50),
+                          codigo_entrada VARCHAR(50) NOT NULL,
                           ativo         BOOLEAN     NOT NULL,
-                          CONSTRAINT uq_sensores_codigo  UNIQUE (codigo_sensor),
-                          CONSTRAINT fk_sensores_estacao FOREIGN KEY (estacao_id) REFERENCES estacoes (id)
+                          CONSTRAINT uq_entradas_codigo  UNIQUE (codigo_entrada),
+                          CONSTRAINT fk_entradas_estacao FOREIGN KEY (estacao_id) REFERENCES estacoes (id)
 );

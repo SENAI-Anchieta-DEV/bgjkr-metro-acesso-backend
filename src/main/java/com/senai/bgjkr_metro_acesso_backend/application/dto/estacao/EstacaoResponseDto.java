@@ -1,7 +1,7 @@
 package com.senai.bgjkr_metro_acesso_backend.application.dto.estacao;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteSummaryDto;
-import com.senai.bgjkr_metro_acesso_backend.application.dto.sensor.SensorSummaryDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaSummaryDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Linha;
 
@@ -14,7 +14,7 @@ public record EstacaoResponseDto(
         String codigoEstacao,
         Set<Linha> linhas,
         List<AgenteSummaryDto> agentes,
-        List<SensorSummaryDto> sensores
+        List<EntradaSummaryDto> entradas
 ) {
     public static EstacaoResponseDto fromEntity(
             Estacao estacao
@@ -28,9 +28,9 @@ public record EstacaoResponseDto(
                         .stream()
                         .map(AgenteSummaryDto::fromEntity)
                         .toList(),
-                estacao.getSensores()
+                estacao.getEntradas()
                         .stream()
-                        .map(SensorSummaryDto::fromEntity)
+                        .map(EntradaSummaryDto::fromEntity)
                         .toList()
         );
     }
