@@ -8,7 +8,9 @@ import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontra
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -26,6 +28,8 @@ public class PendenciaService {
     private final EntradaService entradaService;
     private final AgenteService agenteService;
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void criarPendencia(IdentificacaoDto dto) {
         TagPcd tag = tagService.procurarTagAtiva(dto.codigotTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
@@ -52,17 +56,14 @@ public class PendenciaService {
         );
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == authentication.principal.claims['agente'].email")
     public void confirmarAtendimento(String id) {
         procurarPendenciaAtiva(id).setStatusAtendimento(StatusAtendimento.CONCLUIDO);
     }
 
-    protected PendenciaAtendimento procurarPendenciaAtiva(String id) {
-        return repository
-                .findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("PendenciaAtendimento", "id", id));
-    }
-
-
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<PendenciaResponseDto> listarPendenciasAtivas() {
         return repository
                 .findAllByAtivoTrue()
@@ -71,6 +72,8 @@ public class PendenciaService {
                 .toList();
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == authentication.principal.claims['agente'].email")
     public List<PendenciaResponseDto> listarPendenciasDoAgente(String email) {
         AgenteAtendimento agente = agenteService.procurarAgenteAtivo(email);
         return repository
@@ -80,6 +83,8 @@ public class PendenciaService {
                 .toList();
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public List<PendenciaResponseDto> listarPendenciasPorEstacao(String codigoEstacao) {
         Estacao estacao = estacaoService.procurarEstacaoAtiva(codigoEstacao);
         return repository
@@ -89,6 +94,8 @@ public class PendenciaService {
                 .toList();
     }
 
+    @Transactional
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public void removerPendencia(String id) {
         PendenciaAtendimento pendenciaRemovida = procurarPendenciaAtiva(id);
 
@@ -109,5 +116,11 @@ public class PendenciaService {
         pendenciaRemovida.setEntrada(null);
 
         repository.delete(pendenciaRemovida);
+    }
+
+    protected PendenciaAtendimento procurarPendenciaAtiva(String id) {
+        return repository
+                .findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("PendenciaAtendimento", "id", id));
     }
 }
