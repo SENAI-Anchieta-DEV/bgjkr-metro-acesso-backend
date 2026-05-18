@@ -1,6 +1,7 @@
 package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,10 @@ import org.springframework.stereotype.Service;
 public class IdentificacaoService {
     private final PendenciaService pendenciaService;
 
-    public void processarEvento(IdentificacaoDto identificacao) {
+    public PendenciaResponseDto solicitarPendencia(IdentificacaoDto identificacao) {
         System.out.println("Evento recebido no service:");
         System.out.println(identificacao.codigoTag());
 
-        pendenciaService.criarPendencia(identificacao);
+        return PendenciaResponseDto.fromEntity(pendenciaService.criarPendencia(identificacao));
     }
 }

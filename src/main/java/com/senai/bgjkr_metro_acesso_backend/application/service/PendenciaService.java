@@ -2,7 +2,12 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
@@ -30,7 +35,7 @@ public class PendenciaService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public void criarPendencia(IdentificacaoDto dto) {
+    public PendenciaAtendimento criarPendencia(IdentificacaoDto dto) {
         TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
@@ -45,7 +50,7 @@ public class PendenciaService {
         Collections.shuffle(agentesDisponiveis);
         AgenteAtendimento agente = agentesDisponiveis.getFirst();
 
-        repository.save(PendenciaAtendimento.builder()
+        return repository.save(PendenciaAtendimento.builder()
                 .pcdAtendido(pcd)
                 .agente(agente)
                 .estacao(estacao)

@@ -60,7 +60,7 @@ public class MqttSubscriber {
                     SecurityContextHolder.getContext()
                             .setAuthentication(auth);
 
-                    service.processarEvento(identificacao);
+                    service.solicitarPendencia(identificacao);
                 } catch (JsonProcessingException e) {
                     log.error("Erro ao converter JSON MQTT", e);
                 } catch (Exception e) {
