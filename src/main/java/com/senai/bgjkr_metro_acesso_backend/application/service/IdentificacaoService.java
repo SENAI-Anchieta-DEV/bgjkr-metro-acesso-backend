@@ -14,6 +14,6 @@ public class IdentificacaoService {
         System.out.println("Evento recebido no service:");
         System.out.println(identificacao.codigoTag());
 
-        return PendenciaResponseDto.fromEntity(pendenciaService.criarPendencia(identificacao));
+        return pendenciaService.criarPendencia(identificacao);
     }
 }

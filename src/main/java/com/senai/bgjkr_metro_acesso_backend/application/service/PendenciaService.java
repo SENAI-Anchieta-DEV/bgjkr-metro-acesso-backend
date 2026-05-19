@@ -12,6 +12,9 @@ import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,7 @@ public class PendenciaService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public PendenciaAtendimento criarPendencia(IdentificacaoDto dto) {
+    public PendenciaResponseDto criarPendencia(IdentificacaoDto dto) {
         TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
@@ -50,15 +53,17 @@ public class PendenciaService {
         Collections.shuffle(agentesDisponiveis);
         AgenteAtendimento agente = agentesDisponiveis.getFirst();
 
-        return repository.save(PendenciaAtendimento.builder()
+        PendenciaAtendimento pendencia = PendenciaAtendimento.builder()
                 .pcdAtendido(pcd)
                 .agente(agente)
                 .estacao(estacao)
                 .entrada(entrada)
                 .dataHora(dataHora)
                 .statusAtendimento(StatusAtendimento.PENDENTE)
-                .build()
-        );
+                .ativo(true)
+                .build();
+
+        return PendenciaResponseDto.fromEntity(repository.save(pendencia));
     }
 
     @Transactional

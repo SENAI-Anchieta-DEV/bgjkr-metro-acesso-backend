@@ -22,7 +22,7 @@ import java.net.URI;
 
 @Tag(name = "Identificações", description = "Simulação de identificação de tags de PcD nas entradas das estações.")
 @RestController
-@RequestMapping("/api/simulacoes")
+@RequestMapping("/api/identificacao")
 @RequiredArgsConstructor
 public class IdentificacaoController {
     private final IdentificacaoService service;

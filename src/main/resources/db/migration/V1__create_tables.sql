@@ -80,7 +80,7 @@ CREATE TABLE usuarios_pcd
 CREATE TABLE pcd_tipos_deficiencia
 (
     pcd_id           VARCHAR(36) NOT NULL,
-    tipo_deficiencia VARCHAR(50) NOT NULL,
+    tipos_deficiencia VARCHAR(50) NOT NULL,
     CONSTRAINT fk_pcd_tipos_usuario_pcd FOREIGN KEY (pcd_id) REFERENCES usuarios_pcd (id)
 );
 
@@ -128,7 +128,7 @@ CREATE TABLE pendencias
     id                 VARCHAR(36) PRIMARY KEY,
 
     ativo              BOOLEAN     NOT NULL,
-    status_atendimento VARCHAR(50) NOT NULL,
+    status_atendimento TINYINT     NOT NULL,
     data_hora          TIMESTAMP   NOT NULL,
 
     agente_id          VARCHAR(36),
