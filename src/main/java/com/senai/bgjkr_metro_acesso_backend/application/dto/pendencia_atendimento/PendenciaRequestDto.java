@@ -1,25 +1,26 @@
 package com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record IdentificacaoDto(
+public record PendenciaRequestDto(
         @NotBlank
         @Size(max = 200)
         String codigoTag,
 
         @NotBlank
         @Size(max = 200)
-        String codigoEntrada,
+        String codigoEstacao,
 
         @NotBlank
         @Size(max = 200)
-        String codigoEstacao,
+        String codigoEntrada,
 
-        @Min(0)
-        @Max(9999999999L) // ano ~2286
-        long timestamp
+        boolean tipo,
+
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        String dataHora
 ) {
 }

@@ -52,6 +52,9 @@ public class Entrada {
     @OneToMany(mappedBy = "entrada")
     private List<PendenciaAtendimento> pendencias;
 
+    @Column(nullable = false, length = 50, unique = true)
+    private String bssid;
+
     @Column(nullable = false)
     private boolean ativo;
 }

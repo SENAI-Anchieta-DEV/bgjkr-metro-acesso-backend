@@ -1,6 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
-import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.IdentificacaoService;
@@ -36,7 +36,13 @@ public class IdentificacaoController {
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = TagRequestDto.class),
-                            examples = @ExampleObject(value = "{\n  \"codigoTag\": \"TAG-XYZ-789\"\n}")
+                            examples = @ExampleObject(value = """
+                                    {
+                                        "codigoTag": "TAG-XYZ-789",
+                                        "bssid": "34:AB:95:1F:2C:88",
+                                        "embarque": true
+                                    }
+                                    """)
                     )
             ),
             responses = {
@@ -45,9 +51,9 @@ public class IdentificacaoController {
             }
     )
     @PostMapping
-    public ResponseEntity<PendenciaResponseDto> simularIdentificacao(@RequestBody @Valid IdentificacaoDto requestDto) {
+    public ResponseEntity<PendenciaResponseDto> simularIdentificacao(@RequestBody @Valid IdentificacaoDto dto) {
         return ResponseEntity
                 .created(URI.create("api/simulacoes"))
-                .body(service.solicitarPendencia(requestDto));
+                .body(service.solicitarPendencia(dto));
     }
 }

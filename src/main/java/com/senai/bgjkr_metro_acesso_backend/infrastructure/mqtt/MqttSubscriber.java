@@ -2,7 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.infrastructure.mqtt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.IdentificacaoService;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;

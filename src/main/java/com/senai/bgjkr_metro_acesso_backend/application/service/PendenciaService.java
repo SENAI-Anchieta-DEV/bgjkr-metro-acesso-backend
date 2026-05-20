@@ -1,6 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.application.service;
 
-import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
@@ -12,9 +12,6 @@ import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -38,7 +35,7 @@ public class PendenciaService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public PendenciaResponseDto criarPendencia(IdentificacaoDto dto) {
+    public PendenciaResponseDto criarPendencia(PendenciaRequestDto dto) {
         TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
