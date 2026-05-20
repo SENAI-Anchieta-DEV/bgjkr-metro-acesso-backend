@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
+
 public record PendenciaRequestDto(
         @NotBlank
         @Size(max = 200)
@@ -21,6 +23,6 @@ public record PendenciaRequestDto(
         boolean tipo,
 
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-        String dataHora
+        LocalDateTime dataHora
 ) {
 }

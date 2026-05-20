@@ -88,10 +88,12 @@ VALUES ('a4f3a444-4444-4444-4444-444444444444',
 INSERT INTO entradas (id,
                       estacao_id,
                       codigo_entrada,
+                      bssid,
                       ativo)
 VALUES ('30303030',
         'e3f3a333-3333-3333-3333-333333333333',
         '123321',
+        '34:AB:95:1F:2C:88',
         true);
 
 -- ========================

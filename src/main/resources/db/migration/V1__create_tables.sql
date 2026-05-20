@@ -118,6 +118,7 @@ CREATE TABLE entradas
     id             VARCHAR(36) NOT NULL PRIMARY KEY,
     estacao_id     VARCHAR(36),
     codigo_entrada VARCHAR(50) NOT NULL,
+    bssid          VARCHAR(50) NOT NULL UNIQUE,
     ativo          BOOLEAN     NOT NULL,
     CONSTRAINT uq_entradas_codigo UNIQUE (codigo_entrada),
     CONSTRAINT fk_entradas_estacao FOREIGN KEY (estacao_id) REFERENCES estacoes (id)

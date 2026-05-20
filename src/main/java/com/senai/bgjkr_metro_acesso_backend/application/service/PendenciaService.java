@@ -17,10 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class PendenciaService {
         UsuarioPcd pcd = tag.getUsuarioPcd();
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
         Entrada entrada = entradaService.procurarEntradaAtiva(dto.codigoEntrada());
-        LocalDateTime dataHora = LocalDateTime.ofInstant(Instant.ofEpochSecond(dto.timestamp()), ZoneOffset.UTC);
+        LocalDateTime dataHora = dto.dataHora();
         LocalTime horario = dataHora.toLocalTime();
 
         List<AgenteAtendimento> agentesDisponiveis = agenteService.procurarAgentesDisponiveis(estacao, horario);
