@@ -1,5 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.unit.service;
 
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AgenteService;
 import com.senai.bgjkr_metro_acesso_backend.application.service.EntradaService;
 import com.senai.bgjkr_metro_acesso_backend.application.service.EstacaoService;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -119,7 +121,7 @@ class PendenciaServiceTest {
     }
 
     // =========================
-    // RF20 / RF21 - Confirmação de Atendimento
+    // RF20 - Confirmação de Atendimento
     // =========================
 
     @Test
@@ -143,5 +145,118 @@ class PendenciaServiceTest {
                 StatusAtendimento.CONCLUIDO,
                 pendencia.getStatusAtendimento()
         );
+    }
+
+
+    // =========================
+    // RF22 - Listagem de Pendências Ativas
+    // =========================
+
+    @Test
+    @DisplayName("Deve listar pendências ativas")
+    void deveListarPendenciasAtivas() {
+
+        // Arrange
+        UsuarioPcd pcd = UsuarioPcd.builder()
+                .id("PCD1")
+                .build();
+
+        AgenteAtendimento agente = AgenteAtendimento.builder()
+                .id("AG1")
+                .build();
+
+        Estacao estacao = Estacao.builder()
+                .codigoEstacao("EST001")
+                .build();
+
+        Entrada entrada = Entrada.builder()
+                .codigoEntrada("ENT001")
+                .build();
+
+        PendenciaAtendimento pendencia1 = PendenciaAtendimento.builder()
+                .id("1")
+                .pcdAtendido(pcd)
+                .agente(agente)
+                .estacao(estacao)
+                .entrada(entrada)
+                .statusAtendimento(StatusAtendimento.PENDENTE)
+                .build();
+
+        PendenciaAtendimento pendencia2 = PendenciaAtendimento.builder()
+                .id("2")
+                .pcdAtendido(pcd)
+                .agente(agente)
+                .estacao(estacao)
+                .entrada(entrada)
+                .statusAtendimento(StatusAtendimento.PENDENTE)
+                .build();
+
+        when(repository.findAllByAtivoTrue())
+                .thenReturn(List.of(pendencia1, pendencia2));
+
+        // Act
+        List<PendenciaResponseDto> resultado =
+                service.listarPendenciasAtivas();
+
+        // Assert
+        assertEquals(2, resultado.size());
+
+        verify(repository, times(1))
+                .findAllByAtivoTrue();
+    }
+
+    // =========================
+    // RF23 - Listagem de Pendências do Agente
+    // =========================
+
+    @Test
+    @DisplayName("Deve listar pendências do agente")
+    void deveListarPendenciasDoAgente() {
+
+        // Arrange
+        UsuarioPcd pcd = UsuarioPcd.builder()
+                .id("PCD1")
+                .build();
+
+        AgenteAtendimento agente = AgenteAtendimento.builder()
+                .id("AG1")
+                .email("agente@email.com")
+                .build();
+
+        Estacao estacao = Estacao.builder()
+                .codigoEstacao("EST001")
+                .build();
+
+        Entrada entrada = Entrada.builder()
+                .codigoEntrada("ENT001")
+                .build();
+
+        PendenciaAtendimento pendencia = PendenciaAtendimento.builder()
+                .id("1")
+                .pcdAtendido(pcd)
+                .agente(agente)
+                .estacao(estacao)
+                .entrada(entrada)
+                .statusAtendimento(StatusAtendimento.PENDENTE)
+                .build();
+
+     //   when(agenteService.procurarAgenteAtivo("agente@email.com"))
+       //         .thenReturn(agente);                                      ta protegido a rota
+
+        when(repository.findAllByAgenteAndAtivoTrue(agente))
+                .thenReturn(List.of(pendencia));
+
+        // Act
+        List<PendenciaResponseDto> resultado =
+                service.listarPendenciasDoAgente("agente@email.com");
+
+        // Assert
+        assertEquals(1, resultado.size());
+
+        //verify(agenteService, times(1))
+//.procurarAgenteAtivo("agente@email.com");        ta protegido a rota
+
+        verify(repository, times(1))
+                .findAllByAgenteAndAtivoTrue(agente);
     }
 }
