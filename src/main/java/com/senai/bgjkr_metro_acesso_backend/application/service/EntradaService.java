@@ -79,6 +79,12 @@ public class EntradaService {
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Entrada", "codigoEntrada", codigoEntrada));
     }
 
+    protected Entrada procurarEntradaPorBssid(String bssid) {
+        return repository
+                .findByBssidAndAtivoTrue(bssid)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Entrada", "bssid", bssid));
+    }
+
     private Entrada reativarEntrada(Entrada entrada, EntradaRequestDto requestDto) {
         atualizarValores(entrada, requestDto);
         entrada.setAtivo(true);

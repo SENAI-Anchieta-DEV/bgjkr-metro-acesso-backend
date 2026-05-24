@@ -5,6 +5,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.exception.auth.CredenciaisInv
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.auth.UsuarioNaoAutenticadoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.estacao.NumeroDeLinhaInvalidaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.*;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.tag_pcd.TagIndisponivelException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -109,7 +110,8 @@ public class GlobalExceptionHandler {
             TagIndisponivelException.class,
             AlterarFormularioPcdJaValidadoException.class,
             FormularioPcdComEmailDeUsuarioAtivoException.class,
-            RemocaoDeFormularioDePcdAtivoException.class
+            RemocaoDeFormularioDePcdAtivoException.class,
+            AgenteIndisponivelParaAtendimentoException.class
     })
     public ProblemDetail handleConflitos(Exception ex, HttpServletRequest request) {
         return ProblemDetailUtils.buildProblem(

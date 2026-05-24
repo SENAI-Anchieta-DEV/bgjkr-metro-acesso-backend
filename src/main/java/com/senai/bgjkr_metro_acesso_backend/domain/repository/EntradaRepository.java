@@ -16,5 +16,7 @@ public interface EntradaRepository extends JpaRepository<Entrada, String> {
 
     Optional<Entrada> findByCodigoEntradaAndAtivoTrue(String codigoEntrada);
 
+    Optional<Entrada> findByBssidAndAtivoTrue(String bssid);
+
     List<Entrada> findAllByAtivoTrue();
 }
