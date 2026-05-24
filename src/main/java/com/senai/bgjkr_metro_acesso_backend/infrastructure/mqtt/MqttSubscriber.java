@@ -19,8 +19,9 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-@Slf4j // log padronizado do lombok
+@Slf4j
 public class MqttSubscriber {
+
     private final IdentificacaoService service;
     private final ObjectMapper objectMapper;
 
@@ -42,35 +43,37 @@ public class MqttSubscriber {
 
             client.subscribe("metro/tag/entrada", (topic, msg) -> {
                 String payload = new String(msg.getPayload());
-
                 log.info("MQTT recebido: {}", payload);
 
                 try {
-                    IdentificacaoDto identificacao = objectMapper.readValue(payload, IdentificacaoDto.class);
-
-                    Authentication auth =
-                            new UsernamePasswordAuthenticationToken(
-                                    "mqtt-system",
-                                    null,
-                                    List.of(new SimpleGrantedAuthority(
-                                            "ROLE_ADMINISTRADOR"
-                                    ))
-                            );
-
-                    SecurityContextHolder.getContext()
-                            .setAuthentication(auth);
-
-                    service.solicitarPendencia(identificacao);
-                } catch (JsonProcessingException e) {
-                    log.error("Erro ao converter JSON MQTT", e);
+                    processMessage(payload);
                 } catch (Exception e) {
-                    log.error("Erro processando evento MQTT", e);
-                } finally {
-                    SecurityContextHolder.clearContext();
+                    log.error("Erro processando MQTT", e);
                 }
             });
+
         } catch (Exception e) {
             log.error("Erro ao iniciar MQTT", e);
+        }
+    }
+
+    public void processMessage(String payload) throws JsonProcessingException {
+        IdentificacaoDto identificacao =
+                objectMapper.readValue(payload, IdentificacaoDto.class);
+
+        Authentication auth =
+                new UsernamePasswordAuthenticationToken(
+                        "mqtt-system",
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"))
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        try {
+            service.solicitarPendencia(identificacao);
+        } finally {
+            SecurityContextHolder.clearContext();
         }
     }
 }

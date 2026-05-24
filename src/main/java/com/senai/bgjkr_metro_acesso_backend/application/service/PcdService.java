@@ -78,13 +78,13 @@ public class PcdService {
     }
 
     // Funções auxiliares
-    protected UsuarioPcd procurarPcdAtivo(String email) {
+    public UsuarioPcd procurarPcdAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("UsuarioPcd", "email", email));
     }
 
-    protected boolean existePcdAtivo(String email) {
+    public boolean existePcdAtivo(String email) {
         return repository.existsByEmailAndAtivoTrue(email);
     }
 
