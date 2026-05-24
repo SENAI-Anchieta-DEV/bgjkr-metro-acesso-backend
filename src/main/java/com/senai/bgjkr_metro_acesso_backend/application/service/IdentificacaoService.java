@@ -7,6 +7,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.EntradaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ public class IdentificacaoService {
     private final PendenciaService pendenciaService;
     private final EntradaService entradaService;
 
+    @Transactional
     public PendenciaResponseDto solicitarPendencia(IdentificacaoDto identificacao) {
         System.out.println("Evento recebido no service:");
         System.out.println(identificacao.codigoTag());

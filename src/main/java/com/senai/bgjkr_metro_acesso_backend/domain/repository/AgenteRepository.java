@@ -20,6 +20,14 @@ public interface AgenteRepository extends JpaRepository<AgenteAtendimento, Strin
 
     List<AgenteAtendimento> findAllByAtivoTrue();
 
-    @Query("SELECT a FROM AgenteAtendimento a WHERE :horario BETWEEN a.inicioTurno AND a.fimTurno")
-    List<AgenteAtendimento> findByEstacaoAndHorarioNoTurno(@Param("estacao") Estacao estacao, @Param("horario") LocalTime horario);
+    @Query("""
+        SELECT a
+        FROM AgenteAtendimento a
+        WHERE a.estacao = :estacao
+        AND :horario BETWEEN a.inicioTurno AND a.fimTurno
+    """)
+    List<AgenteAtendimento> findByEstacaoAndHorarioNoTurno(
+            @Param("estacao") Estacao estacao,
+            @Param("horario") LocalTime horario
+    );
 }
