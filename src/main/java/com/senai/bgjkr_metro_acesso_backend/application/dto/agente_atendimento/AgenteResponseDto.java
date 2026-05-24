@@ -1,8 +1,8 @@
 package com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoSummaryDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -14,7 +14,7 @@ public record AgenteResponseDto(
         LocalTime inicioTurno,
         LocalTime fimTurno,
         EstacaoSummaryDto estacao,
-        List<PendenciaAtendimento> pendencias
+        List<PendenciaResponseDto> pendencias
 ) {
     public static AgenteResponseDto fromEntity(
             AgenteAtendimento agente
@@ -28,7 +28,11 @@ public record AgenteResponseDto(
                 agente.getEstacao() == null ?
                         null :
                         EstacaoSummaryDto.fromEntity(agente.getEstacao()),
-                agente.getPendencias()
+                agente.getPendencias() == null ?
+                        null :
+                        agente.getPendencias().stream()
+                                .map(PendenciaResponseDto::fromEntity)
+                                .toList()
         );
     }
 }

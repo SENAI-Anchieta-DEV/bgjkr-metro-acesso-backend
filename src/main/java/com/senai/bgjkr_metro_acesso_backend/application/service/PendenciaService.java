@@ -1,8 +1,13 @@
 package com.senai.bgjkr_metro_acesso_backend.application.service;
 
-import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.IdentificacaoDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
@@ -12,10 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,30 +33,35 @@ public class PendenciaService {
 
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public void criarPendencia(IdentificacaoDto dto) {
-        TagPcd tag = tagService.procurarTagAtiva(dto.codigotTag());
+    public PendenciaResponseDto criarPendencia(PendenciaRequestDto dto) {
+        TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
         Entrada entrada = entradaService.procurarEntradaAtiva(dto.codigoEntrada());
-        LocalDateTime dataHora = LocalDateTime.ofInstant(Instant.ofEpochSecond(dto.timestamp()), ZoneOffset.UTC);
+        LocalDateTime dataHora = dto.dataHora();
         LocalTime horario = dataHora.toLocalTime();
 
         List<AgenteAtendimento> agentesDisponiveis = agenteService.procurarAgentesDisponiveis(estacao, horario);
         if (agentesDisponiveis.isEmpty()) {
+            System.out.println(horario);
+            System.out.println(agenteService.listarAgentesAtivos().getFirst().inicioTurno());
+            System.out.println(agenteService.listarAgentesAtivos().getFirst().fimTurno());
             throw new AgenteIndisponivelParaAtendimentoException();
         }
         Collections.shuffle(agentesDisponiveis);
         AgenteAtendimento agente = agentesDisponiveis.getFirst();
 
-        repository.save(PendenciaAtendimento.builder()
+        PendenciaAtendimento pendencia = PendenciaAtendimento.builder()
                 .pcdAtendido(pcd)
                 .agente(agente)
                 .estacao(estacao)
                 .entrada(entrada)
                 .dataHora(dataHora)
                 .statusAtendimento(StatusAtendimento.PENDENTE)
-                .build()
-        );
+                .ativo(true)
+                .build();
+
+        return PendenciaResponseDto.fromEntity(repository.save(pendencia));
     }
 
     @Transactional
