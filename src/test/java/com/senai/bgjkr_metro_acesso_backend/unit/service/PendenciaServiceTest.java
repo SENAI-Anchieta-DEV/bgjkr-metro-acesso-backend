@@ -93,31 +93,35 @@ class PendenciaServiceTest {
 
     @Test
     @DisplayName("CT-04 - Agente confirma atendimento: pendência é marcada como CONCLUIDO e excluída do banco após confirmação")
-    void deveConfirmarAtendimentoEExcluirPendenciaAposConfirmacao() {
-        // Arrange – confirmar atendimento
+    void deveConfirmarAtendimento() {
+        // Arrange
         when(repository.findById("PEND-001"))
                 .thenReturn(Optional.of(pendenciaAtiva));
 
-        // Act – agente pressiona botão de confirmação
+        // Act
         pendenciaService.confirmarAtendimento("PEND-001");
 
-        // Assert – pendência marcada como CONCLUIDO (removida do painel)
+        // Assert
         assertEquals(StatusAtendimento.CONCLUIDO, pendenciaAtiva.getStatusAtendimento(),
                 "Após confirmação, o status da pendência deve ser CONCLUIDO.");
 
         verify(repository, times(1)).findById("PEND-001");
+    }
 
-        // Arrange – exclusão do banco após confirmação
-        // Reutiliza o mesmo findById para o fluxo de remoção
+    @Test
+    @DisplayName("CT-04 - Excluir pendência após confirmação")
+    void ExcluirPendenciaAposConfirmacao() {
+
+        // Arrange
         when(repository.findById("PEND-001"))
                 .thenReturn(Optional.of(pendenciaAtiva));
 
-        //Act – exclusão da pendência confirmada
+        // Act
         pendenciaService.removerPendencia("PEND-001");
 
-        // Assert – pendência excluída do banco e vínculos desfeitos
         verify(repository, times(1)).delete(pendenciaAtiva);
 
+        // Assert
         assertNull(pendenciaAtiva.getAgente(),
                 "O vínculo com o agente deve ser removido antes da exclusão.");
         assertNull(pendenciaAtiva.getPcdAtendido(),
@@ -136,17 +140,19 @@ class PendenciaServiceTest {
     @Test
     @DisplayName("CT-04 - Tentativa de confirmar pendência inexistente lança EntidadeNaoEncontradaException")
     void deveLancarExcecaoAoConfirmarPendenciaInexistente() {
+
         // Arrange
         when(repository.findById("ID-INVALIDO"))
                 .thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
         EntidadeNaoEncontradaException excecao = assertThrows(
                 EntidadeNaoEncontradaException.class,
                 () -> pendenciaService.confirmarAtendimento("ID-INVALIDO"),
                 "Deve lançar EntidadeNaoEncontradaException para pendência não encontrada."
         );
 
+        // Assert
         assertNotNull(excecao.getMessage(),
                 "A exceção deve conter mensagem descritiva.");
         assertTrue(excecao.getMessage().contains("ID-INVALIDO"),

@@ -40,7 +40,7 @@ class AdminBootstrapTest {
     }
 
     @Test
-    @DisplayName("Deve criar administrador provisório com dados corretos quando ele não existir no banco")
+    @DisplayName("CT-01 - Deve criar administrador provisório com dados corretos quando ele não existir no banco")
     void deveCriarAdminProvisorioQuandoNaoExistir() {
         // Arrange
         when(adminRepository.findByEmail(EMAIL_TESTE)).thenReturn(Optional.empty());
@@ -61,7 +61,7 @@ class AdminBootstrapTest {
     }
 
     @Test
-    @DisplayName("Deve apagar administrador provisório quando outro admin for cadastrado no banco")
+    @DisplayName("CT-02 - Deve apagar administrador provisório quando outro admin for cadastrado no banco")
     void deveApagarAdminProvisorioQuandoExistirAdminCadastrado() {
         // Arrange
         Administrador adminProvisorio = Administrador.builder()
