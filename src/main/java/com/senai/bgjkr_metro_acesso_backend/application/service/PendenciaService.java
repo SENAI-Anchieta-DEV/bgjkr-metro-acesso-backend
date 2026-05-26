@@ -118,7 +118,7 @@ public class PendenciaService {
         repository.delete(pendenciaRemovida);
     }
 
-    protected PendenciaAtendimento procurarPendenciaAtiva(String id) {
+    public PendenciaAtendimento procurarPendenciaAtiva(String id) {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("PendenciaAtendimento", "id", id));

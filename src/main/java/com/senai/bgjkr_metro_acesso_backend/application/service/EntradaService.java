@@ -73,7 +73,7 @@ public class EntradaService {
     }
 
     // Funções auxiliares
-    protected Entrada procurarEntradaAtiva(String codigoEntrada) {
+    public Entrada procurarEntradaAtiva(String codigoEntrada) {
         return repository
                 .findByCodigoEntradaAndAtivoTrue(codigoEntrada)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Entrada", "codigoEntrada", codigoEntrada));
