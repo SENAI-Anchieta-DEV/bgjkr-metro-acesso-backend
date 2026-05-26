@@ -3,7 +3,7 @@ package com.senai.bgjkr_metro_acesso_backend.integration.mqtt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.IdentificacaoService;
-import com.senai.bgjkr_metro_acesso_backend.infrastructure.mqtt.MqttSubscriber;
+import com.senai.bgjkr_metro_acesso_backend.infrastructure.mqtt.MqttSubscriberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-class MqttSubscriberTest {
+class MqttSubscriberServiceTest {
 
     @Test
     @DisplayName("Deve processar payload")
@@ -20,7 +20,7 @@ class MqttSubscriberTest {
         IdentificacaoService service = mock(IdentificacaoService.class);
         ObjectMapper mapper = new ObjectMapper();
 
-        MqttSubscriber subscriber = new MqttSubscriber(service, mapper);
+        MqttSubscriberService subscriber = new MqttSubscriberService(service, mapper);
 
         String payload = """
                 {
@@ -43,7 +43,7 @@ class MqttSubscriberTest {
         IdentificacaoService service = mock(IdentificacaoService.class);
         ObjectMapper mapper = new ObjectMapper();
 
-        MqttSubscriber subscriber = new MqttSubscriber(service, mapper);
+        MqttSubscriberService subscriber = new MqttSubscriberService(service, mapper);
 
         String payload = """
         {

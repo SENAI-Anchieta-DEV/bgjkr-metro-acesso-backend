@@ -1,25 +1,18 @@
 package com.senai.bgjkr_metro_acesso_backend.unit.service;
 
+import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
-import com.senai.bgjkr_metro_acesso_backend.application.service.AgenteService;
-import com.senai.bgjkr_metro_acesso_backend.application.service.EntradaService;
-import com.senai.bgjkr_metro_acesso_backend.application.service.EstacaoService;
-import com.senai.bgjkr_metro_acesso_backend.application.service.PendenciaService;
-import com.senai.bgjkr_metro_acesso_backend.application.service.TagService;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
+import com.senai.bgjkr_metro_acesso_backend.application.service.*;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -30,10 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PendenciaServiceTest {
@@ -53,8 +43,39 @@ class PendenciaServiceTest {
     @Mock
     private AgenteService agenteService;
 
-    @InjectMocks
     private PendenciaService service;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        service = new PendenciaService(repository, estacaoService, tagService, entradaService, agenteService);
+    }
+
+    @Test
+    @DisplayName("Deve retornar agente disponível para atendimento")
+    void deveSelecionarAgenteDisponivel() {
+        // ARRANGE
+        Estacao estacao = new Estacao();
+        estacao.setId("EST01");
+
+        AgenteAtendimento agente = new AgenteAtendimento();
+        agente.setId("AG01");
+        agente.setNome("Agente 1");
+
+        when(agenteService.procurarAgentesDisponiveis(eq(estacao), any(LocalTime.class)))
+                .thenReturn(List.of(agente));
+
+        // ACT
+        List<AgenteAtendimento> result =
+                agenteService.procurarAgentesDisponiveis(estacao, LocalTime.now());
+
+        // ASSERT
+        assertEquals(1, result.size());
+        assertEquals("AG01", result.get(0).getId());
+
+        verify(agenteService, times(1))
+                .procurarAgentesDisponiveis(eq(estacao), any(LocalTime.class));
+    }
 
     @Test
     @DisplayName("Deve criar pendência corretamente")
@@ -115,34 +136,5 @@ class PendenciaServiceTest {
 
         PendenciaAtendimento salvo = captor.getValue();
         assertNotNull(salvo);
-    }
-
-    @Test
-    @DisplayName("RF17 - Deve retornar agente disponível para estação")
-    void deveSelecionarAgenteDisponivel() {
-
-        // ARRANGE
-        AgenteService service = mock(AgenteService.class);
-
-        Estacao estacao = new Estacao();
-        estacao.setId("EST01");
-
-        AgenteAtendimento agente = new AgenteAtendimento();
-        agente.setId("AG01");
-        agente.setNome("Agente 1");
-
-        when(service.procurarAgentesDisponiveis(eq(estacao), any(LocalTime.class)))
-                .thenReturn(List.of(agente));
-
-        // ACT
-        List<AgenteAtendimento> result =
-                service.procurarAgentesDisponiveis(estacao, LocalTime.now());
-
-        // ASSERT
-        assertEquals(1, result.size());
-        assertEquals("AG01", result.get(0).getId());
-
-        verify(service, times(1))
-                .procurarAgentesDisponiveis(eq(estacao), any(LocalTime.class));
     }
 }

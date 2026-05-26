@@ -20,19 +20,18 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 @Slf4j
-public class MqttSubscriber {
-
+public class MqttSubscriberService {
     private final IdentificacaoService service;
     private final ObjectMapper objectMapper;
 
     @PostConstruct
     public void init() {
-        try {
-            MqttClient client = new MqttClient(
-                    "tcp://localhost:1883",
-                    MqttClient.generateClientId()
-            );
-
+        try (
+                MqttClient client = new MqttClient(
+                        "tcp://localhost:1883",
+                        MqttClient.generateClientId()
+                )
+        ) {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
@@ -41,7 +40,7 @@ public class MqttSubscriber {
 
             log.info("MQTT conectado");
 
-            client.subscribe("metro/tag/entrada", (topic, msg) -> {
+            client.subscribe("metro/tag/entrada", (_, msg) -> {
                 String payload = new String(msg.getPayload());
                 log.info("MQTT recebido: {}", payload);
 
@@ -58,8 +57,7 @@ public class MqttSubscriber {
     }
 
     public void processMessage(String payload) throws JsonProcessingException {
-        IdentificacaoDto identificacao =
-                objectMapper.readValue(payload, IdentificacaoDto.class);
+        IdentificacaoDto identificacaoDto = converterPayload(payload);
 
         Authentication auth =
                 new UsernamePasswordAuthenticationToken(
@@ -71,9 +69,13 @@ public class MqttSubscriber {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         try {
-            service.solicitarPendencia(identificacao);
+            service.solicitarPendencia(identificacaoDto);
         } finally {
             SecurityContextHolder.clearContext();
         }
+    }
+
+    public IdentificacaoDto converterPayload(String payload) throws JsonProcessingException {
+        return objectMapper.readValue(payload, IdentificacaoDto.class);
     }
 }
