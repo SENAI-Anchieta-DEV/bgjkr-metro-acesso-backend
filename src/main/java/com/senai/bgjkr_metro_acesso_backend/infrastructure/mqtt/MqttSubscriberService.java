@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class MqttSubscriberService {
-    private final IdentificacaoService service;
+    private final IdentificacaoService identificacaoService;
     private final ObjectMapper objectMapper;
 
     @PostConstruct
@@ -57,8 +57,17 @@ public class MqttSubscriberService {
     }
 
     public void processMessage(String payload) throws JsonProcessingException {
-        IdentificacaoDto identificacaoDto = converterPayload(payload);
+        IdentificacaoDto identificacaoDto = objectMapper.readValue(payload, IdentificacaoDto.class);
+        autenticarSolicitacao();
 
+        try {
+            identificacaoService.solicitarPendencia(identificacaoDto);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    public void autenticarSolicitacao(){
         Authentication auth =
                 new UsernamePasswordAuthenticationToken(
                         "mqtt-system",
@@ -67,15 +76,5 @@ public class MqttSubscriberService {
                 );
 
         SecurityContextHolder.getContext().setAuthentication(auth);
-
-        try {
-            service.solicitarPendencia(identificacaoDto);
-        } finally {
-            SecurityContextHolder.clearContext();
-        }
-    }
-
-    public IdentificacaoDto converterPayload(String payload) throws JsonProcessingException {
-        return objectMapper.readValue(payload, IdentificacaoDto.class);
     }
 }

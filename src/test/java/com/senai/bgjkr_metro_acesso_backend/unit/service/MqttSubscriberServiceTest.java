@@ -1,6 +1,5 @@
 package com.senai.bgjkr_metro_acesso_backend.unit.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.IdentificacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.IdentificacaoService;
@@ -9,8 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class MqttSubscriberServiceTest {
     @Mock
@@ -28,20 +33,68 @@ public class MqttSubscriberServiceTest {
     }
 
     @Test
-    @DisplayName("CT-13 Deve ler payload da tag em DTO")
-    void deveLerPayloadDaTagEmDto() throws JsonProcessingException {
+    @DisplayName("Deve converter payload MQTT em DTO corretamente")
+    void deveConverterPayloadEmDto() throws Exception {
         // ARRANGE
-        String payload = "{\"codigoTag\": \"1234\",\"bssid\": \"AA:BB:CC:DD:EE:FF\",\"tipo\": true}";
-        IdentificacaoDto dtoEsperado = new IdentificacaoDto(
-                "1234",
-                "AA:BB:CC:DD:EE:FF",
-                true
-        );
+        String payload = """
+            {
+                "codigoTag": "1234",
+                "bssid": "AA:BB:CC:DD:EE:FF",
+                "tipo": true
+            }
+            """;
+
+        ArgumentCaptor<IdentificacaoDto> captor =
+                ArgumentCaptor.forClass(IdentificacaoDto.class);
 
         // ACT
-        IdentificacaoDto payloadConvertido = service.converterPayload(payload);
+        service.processMessage(payload);
 
         // ASSERT
-        assertEquals(dtoEsperado, payloadConvertido);
+        verify(identificacaoService)
+                .solicitarPendencia(captor.capture());
+
+        IdentificacaoDto dtoCapturado = captor.getValue();
+
+        assertEquals("1234", dtoCapturado.codigoTag());
+        assertEquals("AA:BB:CC:DD:EE:FF", dtoCapturado.bssid());
+        assertTrue(dtoCapturado.tipo());
+    }
+
+    @Test
+    @DisplayName("Deve autenticar antes de solicitar pendência")
+    void deveAutenticarAntesDeSolicitarPendencia() throws Exception {
+        String payload = "{}";
+
+        doAnswer(_ -> {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+            assertNotNull(auth);
+            assertEquals("mqtt-system", auth.getName());
+
+            return null;
+        }).when(identificacaoService)
+                .solicitarPendencia(any());
+
+        mqttSubscriberService.processMessage(payload);
+    }
+
+    @Test
+    @DisplayName("Deve chamar IdentificacaoService para solicitar pendência")
+    void deveChamarIdentificacaoService() throws Exception {
+        // ARRANGE
+        String payload = """
+            {
+                "codigoTag": "1234",
+                "bssid": "AA:BB:CC:DD:EE:FF",
+                "tipo": true
+            }
+            """;
+
+        // ACT
+        service.processMessage(payload);
+
+        // ASSERT
+        verify(identificacaoService).solicitarPendencia(any(IdentificacaoDto.class));
     }
 }

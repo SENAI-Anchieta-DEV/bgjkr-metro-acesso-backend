@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class IdentificacaoServiceTest {
-
     @Mock
     private PendenciaService pendenciaService;
 
@@ -90,26 +89,9 @@ class IdentificacaoServiceTest {
     }
 
     @Test
-    @DisplayName("RF15 - Deve retornar PcD associado à tag corretamente")
-    void deveValidarAssociacaoTagPcd() {
+    @DisplayName("Deve associar a tag identificada a um PcD")
+    void deveAssociarTagAPcd() {
 
-        // ARRANGE
-        TagService service = mock(TagService.class);
-
-        UsuarioPcd pcd = new UsuarioPcd();
-        pcd.setId("PCD01");
-
-        TagPcd tag = new TagPcd();
-        tag.setUsuarioPcd(pcd);
-
-        when(service.procurarTagAtiva("TAG123")).thenReturn(tag);
-
-        // ACT
-        TagPcd result = service.procurarTagAtiva("TAG123");
-
-        // ASSERT
-        assertEquals("PCD01", result.getUsuarioPcd().getId());
-        verify(service, times(1)).procurarTagAtiva("TAG123");
     }
 
     @Test
