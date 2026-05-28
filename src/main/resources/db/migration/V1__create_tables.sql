@@ -129,7 +129,7 @@ CREATE TABLE pendencias
     id                 VARCHAR(36) PRIMARY KEY,
 
     ativo              BOOLEAN     NOT NULL,
-    status_atendimento TINYINT     NOT NULL,
+    status_atendimento SMALLINT     NOT NULL,
     data_hora          TIMESTAMP   NOT NULL,
 
     agente_id          VARCHAR(36),
