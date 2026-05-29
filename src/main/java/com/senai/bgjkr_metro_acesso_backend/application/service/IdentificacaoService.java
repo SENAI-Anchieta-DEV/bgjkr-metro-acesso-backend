@@ -4,7 +4,6 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.Id
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
-import com.senai.bgjkr_metro_acesso_backend.domain.repository.EntradaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +18,6 @@ public class IdentificacaoService {
 
     @Transactional
     public PendenciaResponseDto solicitarPendencia(IdentificacaoDto identificacao) {
-        System.out.println("Evento recebido no service:");
-        System.out.println(identificacao.codigoTag());
-
         Entrada entrada = entradaService.procurarEntradaPorBssid(identificacao.bssid());
         String codigoEstacao = entrada.getEstacao().getCodigoEstacao();
         String codigoEntrada = entrada.getCodigoEntrada();

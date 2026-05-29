@@ -7,7 +7,10 @@ import com.senai.bgjkr_metro_acesso_backend.infrastructure.mqtt.MqttSubscriberSe
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -37,28 +40,26 @@ public class MqttSubscriberServiceTest {
     void deveConverterPayloadEmDto() throws Exception {
         // ARRANGE
         String payload = """
-            {
-                "codigoTag": "1234",
-                "bssid": "AA:BB:CC:DD:EE:FF",
-                "tipo": true
-            }
-            """;
-
-        ArgumentCaptor<IdentificacaoDto> captor =
-                ArgumentCaptor.forClass(IdentificacaoDto.class);
+                {
+                    "codigoTag": "1234",
+                    "bssid": "AA:BB:CC:DD:EE:FF",
+                    "tipo": true
+                }
+                """;
+        ArgumentCaptor<IdentificacaoDto> captor = ArgumentCaptor.forClass(IdentificacaoDto.class);
 
         // ACT
         service.processMessage(payload);
 
         // ASSERT
-        verify(identificacaoService)
-                .solicitarPendencia(captor.capture());
-
+        verify(identificacaoService).solicitarPendencia(captor.capture());
         IdentificacaoDto dtoCapturado = captor.getValue();
 
         assertEquals("1234", dtoCapturado.codigoTag());
         assertEquals("AA:BB:CC:DD:EE:FF", dtoCapturado.bssid());
         assertTrue(dtoCapturado.tipo());
+
+        verify(service, times(1)).processMessage(payload);
     }
 
     @Test
@@ -76,20 +77,20 @@ public class MqttSubscriberServiceTest {
         }).when(identificacaoService)
                 .solicitarPendencia(any());
 
-        mqttSubscriberService.processMessage(payload);
+        service.processMessage(payload);
     }
 
     @Test
-    @DisplayName("Deve chamar IdentificacaoService para solicitar pendência")
-    void deveChamarIdentificacaoService() throws Exception {
+    @DisplayName("Deve delegar IdentificacaoService para solicitar pendência")
+    void deveDelegarIdentificacaoService() throws Exception {
         // ARRANGE
         String payload = """
-            {
-                "codigoTag": "1234",
-                "bssid": "AA:BB:CC:DD:EE:FF",
-                "tipo": true
-            }
-            """;
+                {
+                    "codigoTag": "1234",
+                    "bssid": "AA:BB:CC:DD:EE:FF",
+                    "tipo": true
+                }
+                """;
 
         // ACT
         service.processMessage(payload);

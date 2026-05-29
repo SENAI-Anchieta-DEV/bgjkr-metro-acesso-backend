@@ -43,9 +43,6 @@ public class PendenciaService {
 
         List<AgenteAtendimento> agentesDisponiveis = agenteService.procurarAgentesDisponiveis(estacao, horario);
         if (agentesDisponiveis.isEmpty()) {
-            System.out.println(horario);
-            System.out.println(agenteService.listarAgentesAtivos().getFirst().inicioTurno());
-            System.out.println(agenteService.listarAgentesAtivos().getFirst().fimTurno());
             throw new AgenteIndisponivelParaAtendimentoException();
         }
         Collections.shuffle(agentesDisponiveis);

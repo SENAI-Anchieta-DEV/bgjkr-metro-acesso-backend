@@ -42,8 +42,7 @@ class IdentificacaoServiceTest {
     @Test
     @DisplayName("Deve criar payload correto para pendência")
     void deveCriarPayloadCorretoParaPendencia() {
-
-        // Arrange
+        // ARRANGE
         IdentificacaoDto dto = new IdentificacaoDto(
                 "TAG123",
                 "BSSID123",
@@ -68,10 +67,10 @@ class IdentificacaoServiceTest {
         when(pendenciaService.criarPendencia(any(PendenciaRequestDto.class)))
                 .thenReturn(mock(PendenciaResponseDto.class));
 
-        // Act
+        // ACT
         service.solicitarPendencia(dto);
 
-        // Assert - captura payload enviado
+        // ASSERT
         ArgumentCaptor<PendenciaRequestDto> captor =
                 ArgumentCaptor.forClass(PendenciaRequestDto.class);
 
@@ -89,15 +88,8 @@ class IdentificacaoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve associar a tag identificada a um PcD")
-    void deveAssociarTagAPcd() {
-
-    }
-
-    @Test
     @DisplayName("RF16 - Deve registrar entrada com estação e data/hora válidas")
     void deveRegistrarEntradaCompleta() {
-
         // ARRANGE
         EntradaService service = mock(EntradaService.class);
 
