@@ -1,5 +1,6 @@
 package com.senai.bgjkr_metro_acesso_backend.infrastructure.security;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UsuarioDetailsService userDetailsService;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        return path.equals("/")
+                || path.equals("/error")
+                || path.equals("/favicon.ico")
+                || path.startsWith("/actuator/health")
+                || path.startsWith("/auth/")
+                || path.startsWith("/swagger-ui/")
+                || path.equals("/swagger-ui.html")
+                || path.startsWith("/v3/api-docs/")
+                || path.startsWith("/h2-console/");
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             @NonNull HttpServletResponse response,
@@ -37,7 +53,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7); // remove "Bearer "
-        email = jwtService.extractEmail(jwt);
+        try {
+            email = jwtService.extractEmail(jwt);
+        } catch (JwtException e) {
+            SecurityContextHolder.clearContext();
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
