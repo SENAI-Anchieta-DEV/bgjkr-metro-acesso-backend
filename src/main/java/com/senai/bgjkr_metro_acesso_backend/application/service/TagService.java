@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
@@ -50,9 +51,9 @@ public class TagService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public TagResponseDto atualizarTag(String codigoTag, TagRequestDto requestDto) {
+    public TagResponseDto atualizarTag(String codigoTag, TagUpdateDto updateDto) {
         TagPcd tagAtualizada = procurarTagAtiva(codigoTag);
-        atualizarValores(tagAtualizada, requestDto);
+        atualizarValores(tagAtualizada, updateDto);
         return TagResponseDto.fromEntity(repository.save(tagAtualizada));
     }
 
@@ -86,8 +87,8 @@ public class TagService {
     }
 
     private TagPcd reativarTag(TagPcd tag, TagRequestDto requestDto) {
-        atualizarValores(tag, requestDto);
         tag.setAtivo(true);
+        tag.setCodigoTag(requestDto.codigoTag());
         return tag;
     }
 
@@ -95,7 +96,8 @@ public class TagService {
         return requestDto.toEntity();
     }
 
-    private void atualizarValores(TagPcd tag, TagRequestDto requestDto) {
-        tag.setCodigoTag(requestDto.codigoTag());
+    private void atualizarValores(TagPcd tag, TagUpdateDto updateDto) {
+        if (updateDto.codigoTag() != null)
+            tag.setCodigoTag(updateDto.codigoTag());
     }
 }

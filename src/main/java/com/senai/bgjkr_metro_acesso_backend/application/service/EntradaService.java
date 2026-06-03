@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
@@ -50,9 +51,9 @@ public class EntradaService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public EntradaResponseDto atualizarEntrada(String codigoEntrada, EntradaRequestDto requestDto) {
+    public EntradaResponseDto atualizarEntrada(String codigoEntrada, EntradaUpdateDto updateDto) {
         Entrada entradaAtualizado = procurarEntradaAtiva(codigoEntrada);
-        atualizarValores(entradaAtualizado, requestDto);
+        atualizarValores(entradaAtualizado, updateDto);
         return EntradaResponseDto.fromEntity(repository.save(entradaAtualizado));
     }
 
@@ -86,8 +87,11 @@ public class EntradaService {
     }
 
     private Entrada reativarEntrada(Entrada entrada, EntradaRequestDto requestDto) {
-        atualizarValores(entrada, requestDto);
         entrada.setAtivo(true);
+
+        entrada.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
+        entrada.setCodigoEntrada(requestDto.codigoEntrada());
+
         return entrada;
     }
 
@@ -96,9 +100,11 @@ public class EntradaService {
         return requestDto.toEntity(estacao);
     }
 
-    private void atualizarValores(Entrada entrada, EntradaRequestDto requestDto) {
-        entrada.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
-        entrada.setCodigoEntrada(requestDto.codigoEntrada());
+    private void atualizarValores(Entrada entrada, EntradaUpdateDto updateDto) {
+        if (updateDto.codigoEstacao() != null)
+            entrada.setEstacao(estacaoService.procurarEstacaoAtiva(updateDto.codigoEstacao()));
+        if (updateDto.codigoEntrada() != null)
+            entrada.setCodigoEntrada(updateDto.codigoEntrada());
     }
 }
 

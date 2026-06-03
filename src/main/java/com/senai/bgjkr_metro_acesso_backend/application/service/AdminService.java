@@ -2,10 +2,13 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Administrador;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.AdminRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,9 +51,9 @@ public class AdminService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public AdminResponseDto atualizarAdmin(String email, AdminRequestDto requestDto) {
+    public AdminResponseDto atualizarAdmin(String email, AdminUpdateDto updateDto) {
         Administrador adminAtualizado = procurarAdminAtivo(email);
-        atualizarValores(adminAtualizado, requestDto);
+        atualizarValores(adminAtualizado, updateDto);
         return AdminResponseDto.fromEntity(repository.save(adminAtualizado));
     }
 
@@ -72,7 +75,11 @@ public class AdminService {
 
     private Administrador reativarAdmin(Administrador admin, AdminRequestDto requestDto) {
         admin.setAtivo(true);
-        atualizarValores(admin, requestDto);
+
+        admin.setNome(requestDto.nome());
+        admin.setEmail(requestDto.email());
+        admin.setSenha(requestDto.senha());
+
         return admin;
     }
 
@@ -82,9 +89,12 @@ public class AdminService {
         return admin;
     }
 
-    private void atualizarValores(Administrador admin, AdminRequestDto requestDto) {
-        admin.setNome(requestDto.nome());
-        admin.setEmail(requestDto.email());
-        admin.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
+    private void atualizarValores(Administrador admin, @Valid @MonotonicNonNull AdminUpdateDto requestDto) {
+        if (requestDto.nome() != null)
+            admin.setNome(requestDto.nome());
+        if (requestDto.email() != null)
+            admin.setEmail(requestDto.email());
+        if (requestDto.senha() != null)
+            admin.setSenha(requestDto.senha());
     }
 }

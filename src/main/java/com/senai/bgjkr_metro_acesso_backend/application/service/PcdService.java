@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
@@ -53,9 +54,9 @@ public class PcdService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
-    public PcdResponseDto atualizarPcd(String email, PcdRequestDto requestDto) {
+    public PcdResponseDto atualizarPcd(String email, PcdUpdateDto updateDto) {
         UsuarioPcd pcdAtualizado = procurarPcdAtivo(email);
-        atualizarValores(pcdAtualizado, requestDto);
+        atualizarValores(pcdAtualizado, updateDto);
         return PcdResponseDto.fromEntity(repository.save(pcdAtualizado));
     }
 
@@ -89,8 +90,15 @@ public class PcdService {
     }
 
     private UsuarioPcd reativarPcd(UsuarioPcd pcd, PcdRequestDto requestDto) {
-        atualizarValores(pcd, requestDto);
         pcd.setAtivo(true);
+
+        pcd.setNome(requestDto.nome());
+        pcd.setEmail(requestDto.email());
+        pcd.setSenha(requestDto.senha());
+        pcd.setTag(tagService.procurarTagAtiva(requestDto.codigoTag()));
+        pcd.setTiposDeficiencia(requestDto.tiposDeficiencia());
+        pcd.setDesejaSuporte(requestDto.desejaSuporte());
+
         return pcd;
     }
 
@@ -102,12 +110,18 @@ public class PcdService {
         return pcd;
     }
 
-    private void atualizarValores(UsuarioPcd pcd, PcdRequestDto requestDto) {
-        pcd.setNome(requestDto.nome());
-        pcd.setEmail(requestDto.email());
-        pcd.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-        pcd.setTag(tagService.procurarTagAtiva(requestDto.codigoTag()));
-        pcd.setTiposDeficiencia(requestDto.tiposDeficiencia());
-        pcd.setDesejaSuporte(requestDto.desejaSuporte());
+    private void atualizarValores(UsuarioPcd pcd, PcdUpdateDto updateDto) {
+        if (updateDto.nome() != null)
+            pcd.setNome(updateDto.nome());
+        if (updateDto.email() != null)
+            pcd.setEmail(updateDto.email());
+        if (updateDto.senha() != null)
+            pcd.setSenha(updateDto.senha());
+        if (updateDto.codigoTag() != null)
+            pcd.setTag(tagService.procurarTagAtiva(updateDto.codigoTag()));
+        if (updateDto.tiposDeficiencia() != null)
+            pcd.setTiposDeficiencia(updateDto.tiposDeficiencia());
+        if (updateDto.desejaSuporte() != null)
+            pcd.setDesejaSuporte(updateDto.desejaSuporte());
     }
 }

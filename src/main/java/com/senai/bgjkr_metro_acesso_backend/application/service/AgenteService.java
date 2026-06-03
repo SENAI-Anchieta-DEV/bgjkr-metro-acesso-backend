@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
@@ -51,9 +52,9 @@ public class AgenteService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
-    public AgenteResponseDto atualizarAgente(String email, AgenteRequestDto requestDto) {
+    public AgenteResponseDto atualizarAgente(String email, AgenteUpdateDto updateDto) {
         AgenteAtendimento agenteAtualizado = procurarAgenteAtivo(email);
-        atualizarValores(agenteAtualizado, requestDto);
+        atualizarValores(agenteAtualizado, updateDto);
         return AgenteResponseDto.fromEntity(repository.save(agenteAtualizado));
     }
 
@@ -85,8 +86,15 @@ public class AgenteService {
     }
 
     private AgenteAtendimento reativarAgente(AgenteAtendimento agente, AgenteRequestDto requestDto) {
-        atualizarValores(agente, requestDto);
         agente.setAtivo(true);
+
+        agente.setNome(requestDto.nome());
+        agente.setEmail(requestDto.email());
+        agente.setSenha(requestDto.senha());
+        agente.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
+        agente.setInicioTurno(requestDto.inicioTurno());
+        agente.setFimTurno(requestDto.fimTurno());
+
         return agente;
     }
 
@@ -97,12 +105,18 @@ public class AgenteService {
         return agente;
     }
 
-    private void atualizarValores(AgenteAtendimento agente, AgenteRequestDto requestDto) {
-        agente.setNome(requestDto.nome());
-        agente.setEmail(requestDto.email());
-        agente.setSenha(requestDto.senha()); // Criptografia de senha em futura feature
-        agente.setEstacao(estacaoService.procurarEstacaoAtiva(requestDto.codigoEstacao()));
-        agente.setInicioTurno(requestDto.inicioTurno());
-        agente.setFimTurno(requestDto.fimTurno());
+    private void atualizarValores(AgenteAtendimento agente, AgenteUpdateDto updateDto) {
+        if (updateDto.nome() != null)
+            agente.setNome(updateDto.nome());
+        if (updateDto.email() != null)
+            agente.setEmail(updateDto.email());
+        if (updateDto.senha() != null)
+            agente.setSenha(updateDto.senha());
+        if (updateDto.codigoEstacao() != null)
+            agente.setEstacao(estacaoService.procurarEstacaoAtiva(updateDto.codigoEstacao()));
+        if (updateDto.inicioTurno() != null)
+            agente.setInicioTurno(updateDto.inicioTurno());
+        if (updateDto.fimTurno() != null)
+            agente.setFimTurno(updateDto.fimTurno());
     }
 }

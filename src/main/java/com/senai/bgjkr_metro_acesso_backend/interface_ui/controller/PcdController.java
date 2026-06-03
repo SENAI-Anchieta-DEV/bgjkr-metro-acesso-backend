@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.PcdService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -99,8 +100,8 @@ public class PcdController {
             }
     )
     @PutMapping("/{email}")
-    public ResponseEntity<PcdResponseDto> atualizarPcd(@PathVariable String email, @RequestBody @Valid PcdRequestDto requestDto) {
-        return ResponseEntity.ok(service.atualizarPcd(email, requestDto));
+    public ResponseEntity<PcdResponseDto> atualizarPcd(@PathVariable String email, @RequestBody PcdUpdateDto updateDto) {
+        return ResponseEntity.ok(service.atualizarPcd(email, updateDto));
     }
 
     @Operation(

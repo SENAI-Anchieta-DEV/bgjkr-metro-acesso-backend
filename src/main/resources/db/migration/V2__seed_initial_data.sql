@@ -1,10 +1,10 @@
 -- ========================
--- TAG
+-- TAG (PRECISA VIR ANTES)
 -- ========================
 INSERT INTO tags (id,
                   codigo_tag,
                   ativo)
-VALUES ('tag-fisica-esp32c3',
+VALUES ('tag-fisica-esp32',
         'A4:CB:8F:20:F9:F4',
         true);
 
@@ -25,17 +25,17 @@ VALUES ('u2f3a222-2222-2222-2222-222222222222',
         true);
 
 -- ========================
--- USUARIOS_PCD (TEM QUE VIR ANTES!)
+-- USUARIOS_PCD (DEPOIS DA TAG)
 -- ========================
 INSERT INTO usuarios_pcd (id,
                           deseja_suporte,
                           tag_id)
 VALUES ('u2f3a222-2222-2222-2222-222222222222',
         true,
-        't1f3a111-1111-1111-1111-111111111111');
+        'tag-fisica-esp32');
 
 -- ========================
--- PCD TIPOS (AGORA SIM)
+-- PCD TIPOS
 -- ========================
 INSERT INTO pcd_tipos_deficiencia (pcd_id,
                                    tipos_deficiencia)
@@ -99,12 +99,8 @@ VALUES ('celular-brayan123',
 -- ========================
 -- ESTACAO_LINHAS
 -- ========================
-INSERT INTO estacao_linhas (estacao_id,
-                      linha)
-VALUES ('e3f3a333-3333-3333-3333-333333333333',
-        'AZUL');
+INSERT INTO estacao_linhas (estacao_id, linha)
+VALUES ('e3f3a333-3333-3333-3333-333333333333', 'AZUL');
 
-INSERT INTO estacao_linhas (estacao_id,
-                      linha)
-VALUES ('e3f3a333-3333-3333-3333-333333333333',
-        'VERMELHA');
+INSERT INTO estacao_linhas (estacao_id, linha)
+VALUES ('e3f3a333-3333-3333-3333-333333333333', 'VERMELHA');
