@@ -10,8 +10,6 @@ public record IdentificacaoDto(
 
         @NotBlank
         @Size(max = 200)
-        String bssid,
-
-        boolean tipo
+        String bssid
 ) {
 }

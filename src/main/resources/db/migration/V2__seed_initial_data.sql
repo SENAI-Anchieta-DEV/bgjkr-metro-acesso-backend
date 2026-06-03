@@ -4,8 +4,8 @@
 INSERT INTO tags (id,
                   codigo_tag,
                   ativo)
-VALUES ('t1f3a111-1111-1111-1111-111111111111',
-        '1',
+VALUES ('tag-fisica-esp32c3',
+        'A4:CB:8F:20:F9:F4',
         true);
 
 -- ========================
@@ -90,10 +90,10 @@ INSERT INTO entradas (id,
                       codigo_entrada,
                       bssid,
                       ativo)
-VALUES ('30303030',
+VALUES ('celular-brayan123',
         'e3f3a333-3333-3333-3333-333333333333',
         '123321',
-        '34:AB:95:1F:2C:88',
+        '26:0B:02:11:73:3F',
         true);
 
 -- ========================

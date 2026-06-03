@@ -4,7 +4,6 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.identificacao_pcd.Id
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
-import com.senai.bgjkr_metro_acesso_backend.domain.repository.EntradaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +30,6 @@ public class IdentificacaoService {
                 identificacao.codigoTag(),
                 codigoEstacao,
                 codigoEntrada,
-                identificacao.tipo(),
                 dataHora
         );
 
