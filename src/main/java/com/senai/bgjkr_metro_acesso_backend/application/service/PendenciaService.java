@@ -65,7 +65,7 @@ public class PendenciaService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == authentication.principal.claims['agente'].email")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
     public void confirmarAtendimento(String id) {
         procurarPendenciaAtiva(id).setStatusAtendimento(StatusAtendimento.CONCLUIDO);
     }
@@ -81,7 +81,7 @@ public class PendenciaService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == authentication.principal.claims['agente'].email")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
     public List<PendenciaResponseDto> listarPendenciasDoAgente(String email) {
         AgenteAtendimento agente = agenteService.procurarAgenteAtivo(email);
         return repository
