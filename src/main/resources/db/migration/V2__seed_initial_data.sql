@@ -18,9 +18,9 @@ INSERT INTO usuarios (id,
                       role,
                       ativo)
 VALUES ('u2f3a222-2222-2222-2222-222222222222',
-        'Pedro Henricky',
-        'pedro@gmail.com',
-        'pedro123',
+        'João da Silva',
+        'joao.silva@email.com',
+        'joao123',
         'USUARIO_PCD',
         true);
 
@@ -29,9 +29,11 @@ VALUES ('u2f3a222-2222-2222-2222-222222222222',
 -- ========================
 INSERT INTO usuarios_pcd (id,
                           deseja_suporte,
+                          comprovacao_id,
                           tag_id)
 VALUES ('u2f3a222-2222-2222-2222-222222222222',
         true,
+        'comprovacao_joao_da_silva',
         'tag-fisica-esp32');
 
 -- ========================
@@ -104,3 +106,29 @@ VALUES ('e3f3a333-3333-3333-3333-333333333333', 'AZUL');
 
 INSERT INTO estacao_linhas (estacao_id, linha)
 VALUES ('e3f3a333-3333-3333-3333-333333333333', 'VERMELHA');
+
+INSERT INTO formularios (id,
+                         nome,
+                         email,
+                         senha,
+                         deseja_suporte,
+                         motivo_reprovacao,
+                         administrador_id,
+                         status,
+                         comprovacao_id,
+                         ativo)
+VALUES ('f9a1c2d3-aaaa-bbbb-cccc-111122223333',
+        'Gabriela Santos',
+        'gabriela.santos@gmail.com',
+        'gabriela123',
+        false,
+        NULL,
+        NULL,
+        'EM_ANALISE',
+        'comprovacao_gabriela_santos',
+        true);
+
+INSERT INTO formularios_tipos_deficiencia (formulario_id,
+                                           tipo_deficiencia)
+VALUES ('f9a1c2d3-aaaa-bbbb-cccc-111122223333',
+        'VISUAL');

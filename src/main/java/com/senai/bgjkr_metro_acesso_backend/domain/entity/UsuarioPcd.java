@@ -29,6 +29,7 @@ import java.util.Set;
 @SuperBuilder
 @Table(name = "usuarios_pcd")
 public class UsuarioPcd extends Usuario {
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "pcd_tipos_deficiencia", joinColumns = @JoinColumn(name = "pcd_id"))
     @Column(name = "tipos_deficiencia", nullable = false)
@@ -37,6 +38,9 @@ public class UsuarioPcd extends Usuario {
 
     @Column(nullable = false)
     private boolean desejaSuporte;
+
+    @Column(nullable = false)
+    private String comprovacaoId;
 
     @OneToOne
     @JoinColumn(name = "tag_id", unique = true)

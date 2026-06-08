@@ -65,7 +65,7 @@ public class PendenciaService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AGENTE_ATENDIMENTO')")
     public void confirmarAtendimento(String id) {
         procurarPendenciaAtiva(id).setStatusAtendimento(StatusAtendimento.CONCLUIDO);
     }

@@ -10,17 +10,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Set;
 
-@Schema(description = "Objeto de transferência para a configuração de contas definitivas de Utilizadores PCD.")
+@Schema(description = "Dados para cadastro direto de usuário PCD pelo administrador (multipart/form-data).")
 public record PcdRequestDto(
-        @Schema(description = "Nome completo da PCD.", example = "Felipe Costa")
+        @Schema(description = "Nome completo do PCD.", example = "Felipe Costa")
         @NotBlank
         @Size(max = 200)
         String nome,
 
-        @Schema(description = "Endereço de e-mail de acesso da PCD.", example = "felipe.pcd@metroacesso.com")
+        @Schema(description = "Endereço de e-mail de acesso.", example = "felipe@email.com")
         @NotBlank
         @Email
         @Size(max = 200)
@@ -31,30 +32,30 @@ public record PcdRequestDto(
         @Size(min = 8, max = 200)
         String senha,
 
-        @Schema(description = "Coleção dos tipos de deficiência validados do utilizador.", example = "[\"VISUAL\", \"MOTORA\"]")
+        @Schema(description = "Tipos de deficiência do usuário.", example = "[\"VISUAL\", \"MOTORA\"]")
         @NotNull
         @NotEmpty
         Set<TipoDeficiencia> tiposDeficiencia,
 
-        @Schema(description = "Sinalizador da preferência ou necessidade de assistência presencial nas estações.", example = "true")
+        @Schema(description = "Indica se o usuário deseja suporte presencial nas estações.", example = "true")
         @NotNull
         Boolean desejaSuporte,
 
-        @Schema(description = "Código hexadecimal/identificador da Tag RFID física entregue a este utilizador.", example = "TAG-XYZ-789")
-        @NotBlank
-        @Size(max = 200)
-        String codigoTag
+        @Schema(description = "Arquivo de laudo médico / comprovação de deficiência.", type = "string", format = "binary")
+        @NotNull
+        MultipartFile comprovacao
 ) {
-    public UsuarioPcd toEntity(TagPcd tagPcd) {
-        return UsuarioPcd.builder()
-                .nome(nome)
-                .email(email)
-                .senha(senha)
-                .ativo(true)
-                .role(Role.USUARIO_PCD)
-                .tiposDeficiencia(tiposDeficiencia)
-                .desejaSuporte(desejaSuporte)
-                .tag(tagPcd)
-                .build();
-    }
+        public UsuarioPcd toEntity(String comprovacaoId, TagPcd tag) {
+                return UsuarioPcd.builder()
+                        .nome(nome)
+                        .email(email)
+                        .senha(senha)
+                        .ativo(true)
+                        .role(Role.USUARIO_PCD)
+                        .tiposDeficiencia(tiposDeficiencia)
+                        .desejaSuporte(desejaSuporte)
+                        .comprovacaoId(comprovacaoId)
+                        .tag(tag)
+                        .build();
+        }
 }

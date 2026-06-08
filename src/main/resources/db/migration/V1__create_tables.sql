@@ -69,12 +69,19 @@ CREATE TABLE tags
 -- ========================
 CREATE TABLE usuarios_pcd
 (
-    id             VARCHAR(36) NOT NULL PRIMARY KEY,
-    deseja_suporte BOOLEAN     NOT NULL,
-    tag_id         VARCHAR(36),
-    CONSTRAINT fk_usuarios_pcd_usuario FOREIGN KEY (id) REFERENCES usuarios (id),
-    CONSTRAINT fk_usuarios_pcd_tag FOREIGN KEY (tag_id) REFERENCES tags (id),
-    CONSTRAINT uq_usuarios_pcd_tag UNIQUE (tag_id)
+    id              VARCHAR(36)  NOT NULL PRIMARY KEY,
+    deseja_suporte  BOOLEAN      NOT NULL,
+    comprovacao_id  VARCHAR(255) NOT NULL,
+    tag_id          VARCHAR(36),
+
+    CONSTRAINT fk_usuarios_pcd_usuario
+        FOREIGN KEY (id) REFERENCES usuarios (id),
+
+    CONSTRAINT fk_usuarios_pcd_tag
+        FOREIGN KEY (tag_id) REFERENCES tags (id),
+
+    CONSTRAINT uq_usuarios_pcd_tag
+        UNIQUE (tag_id)
 );
 
 CREATE TABLE pcd_tipos_deficiencia

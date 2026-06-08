@@ -12,20 +12,20 @@ public record PcdResponseDto(
         String email,
         Set<TipoDeficiencia> tiposDeficiencia,
         Boolean desejaSuporte,
+        String comprovacaoId,
         TagSummaryDto tag
 ) {
-    public static PcdResponseDto fromEntity(
-            UsuarioPcd usuarioPcd
-    ) {
+    public static PcdResponseDto fromEntity(UsuarioPcd usuarioPcd) {
         return new PcdResponseDto(
                 usuarioPcd.getId(),
                 usuarioPcd.getNome(),
                 usuarioPcd.getEmail(),
                 usuarioPcd.getTiposDeficiencia(),
                 usuarioPcd.isDesejaSuporte(),
-                usuarioPcd.getTag() == null ?
-                        null :
-                        TagSummaryDto.fromEntity(usuarioPcd.getTag())
+                usuarioPcd.getComprovacaoId(),
+                usuarioPcd.getTag() == null
+                        ? null
+                        : TagSummaryDto.fromEntity(usuarioPcd.getTag())
         );
     }
 }
