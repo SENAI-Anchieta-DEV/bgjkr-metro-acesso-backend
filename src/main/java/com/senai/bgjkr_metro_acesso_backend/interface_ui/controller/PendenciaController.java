@@ -39,11 +39,5 @@ public class PendenciaController {
                 .noContent()
                 .build();
     }
-
-    @PostMapping("/{id}/concluir")
-    public ResponseEntity<Void> concluirAtendimento(@PathVariable String id) {
-        service.confirmarAtendimento(id);
-        return ResponseEntity.noContent().build();
-    }
 }
 

@@ -1,13 +1,7 @@
 package com.senai.bgjkr_metro_acesso_backend.domain.entity;
 
-import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +19,7 @@ public class PendenciaAtendimento {
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
     private String id;
-    
+
     @ManyToOne
     @JoinColumn(name = "pcd_atendido_id")
     private UsuarioPcd pcdAtendido;
@@ -44,9 +38,6 @@ public class PendenciaAtendimento {
 
     @Column(nullable = false)
     private LocalDateTime dataHora;
-
-    @Column(nullable = false)
-    private StatusAtendimento statusAtendimento;
 
     @Column(nullable = false)
     private boolean ativo;

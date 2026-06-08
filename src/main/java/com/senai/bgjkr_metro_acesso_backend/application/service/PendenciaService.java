@@ -2,13 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.AgenteAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
-import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
+import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.pendencia_atendimento.AgenteIndisponivelParaAtendimentoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
@@ -57,17 +51,10 @@ public class PendenciaService {
                 .estacao(estacao)
                 .entrada(entrada)
                 .dataHora(dataHora)
-                .statusAtendimento(StatusAtendimento.PENDENTE)
                 .ativo(true)
                 .build();
 
         return PendenciaResponseDto.fromEntity(repository.save(pendencia));
-    }
-
-    @Transactional
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AGENTE_ATENDIMENTO')")
-    public void confirmarAtendimento(String id) {
-        procurarPendenciaAtiva(id).setStatusAtendimento(StatusAtendimento.CONCLUIDO);
     }
 
     @Transactional
@@ -103,7 +90,7 @@ public class PendenciaService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AGENTE_ATENDIMENTO')")
     public void removerPendencia(String id) {
         PendenciaAtendimento pendenciaRemovida = procurarPendenciaAtiva(id);
 
