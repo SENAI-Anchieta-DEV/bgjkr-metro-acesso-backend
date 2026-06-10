@@ -44,7 +44,7 @@ services:
 
       # Admin provisório
       - key: ADMIN_EMAIL
-        value: admin@senai.com
+        value: admin@metroacesso.com
 
       - key: ADMIN_SENHA
         sync: false
