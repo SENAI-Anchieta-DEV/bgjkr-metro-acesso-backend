@@ -81,7 +81,7 @@ public class FormularioService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
     public FormAprovacaoResponseDto buscarFormularioAtivo(String email) {
         return FormAprovacaoResponseDto.fromEntity(procurarFormularioAtivo(email));
     }
