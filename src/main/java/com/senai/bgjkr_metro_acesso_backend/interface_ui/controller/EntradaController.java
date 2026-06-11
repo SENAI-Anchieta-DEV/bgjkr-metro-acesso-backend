@@ -40,6 +40,12 @@ public class EntradaController {
                 .ok(service.listarEntradasAtivas());
     }
 
+    @GetMapping("/estacao/{codigoEstacao}")
+    public ResponseEntity<List<EntradaResponseDto>> listarEntradasPorEstacao(@PathVariable String codigoEstacao) {
+        return ResponseEntity
+                .ok(service.listarEntradasPorEstacao(codigoEstacao));
+    }
+
     @GetMapping("/{codigoEntrada}")
     public ResponseEntity<EntradaResponseDto> buscarEntradaAtiva(@PathVariable String codigoEntrada) {
         return ResponseEntity

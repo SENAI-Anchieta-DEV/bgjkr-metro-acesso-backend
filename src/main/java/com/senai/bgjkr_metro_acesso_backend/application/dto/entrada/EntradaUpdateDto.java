@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Dados de registo e localização de Entradas.")
 public record EntradaUpdateDto(
         String codigoEstacao,
+        String bssid,
         String codigoEntrada
 ) {
 }

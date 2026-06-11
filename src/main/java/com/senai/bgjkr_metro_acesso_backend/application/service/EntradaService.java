@@ -44,6 +44,18 @@ public class EntradaService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public List<EntradaResponseDto> listarEntradasPorEstacao(String codigoEstacao) {
+        Estacao estacao = estacaoService.procurarEstacaoAtiva(codigoEstacao);
+        return repository
+                .findAllByEstacaoAndAtivoTrue(estacao)
+                .stream()
+                .map(EntradaResponseDto::fromEntity)
+                .toList();
+    }
+
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public EntradaResponseDto buscarEntradaAtiva(String codigoEntrada) {
         return EntradaResponseDto.fromEntity(procurarEntradaAtiva(codigoEntrada));
     }
@@ -105,6 +117,8 @@ public class EntradaService {
             entrada.setEstacao(estacaoService.procurarEstacaoAtiva(updateDto.codigoEstacao()));
         if (updateDto.codigoEntrada() != null)
             entrada.setCodigoEntrada(updateDto.codigoEntrada());
+        if (updateDto.bssid() != null)
+            entrada.setBssid(updateDto.bssid());
     }
 }
 
