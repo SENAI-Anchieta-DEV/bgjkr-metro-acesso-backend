@@ -52,8 +52,12 @@ public class IdentificacaoController {
     )
     @PostMapping
     public ResponseEntity<PendenciaResponseDto> simularIdentificacao(@RequestBody @Valid IdentificacaoDto dto) {
+        PendenciaResponseDto response = service.solicitarPendencia(dto);
+        if (response == null) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity
                 .created(URI.create("api/simulacoes"))
-                .body(service.solicitarPendencia(dto));
+                .body(response);
     }
 }

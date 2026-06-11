@@ -30,6 +30,11 @@ public class PendenciaService {
     public PendenciaResponseDto criarPendencia(PendenciaRequestDto dto) {
         TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
+
+        if(!pcd.isDesejaSuporte()){
+            return null;
+        }
+
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
         Entrada entrada = entradaService.procurarEntradaAtiva(dto.codigoEntrada());
         LocalDateTime dataHora = dto.dataHora();
