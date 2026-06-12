@@ -16,6 +16,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.repository.PcdRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class PcdService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'AGENTE_ATENDIMENTO') or authentication.name == #email")
-    public PcdResponseDto buscarPcdAtivo(String email) {
+    public PcdResponseDto buscarPcdAtivo(@Param("email") String email) {
         return PcdResponseDto.fromEntity(procurarPcdAtivo(email));
     }
 
@@ -82,7 +83,7 @@ public class PcdService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
-    public PcdResponseDto atualizarPcd(String email, PcdUpdateDto updateDto) {
+    public PcdResponseDto atualizarPcd(@Param("email") String email, PcdUpdateDto updateDto) {
         UsuarioPcd pcdAtualizado = procurarPcdAtivo(email);
         atualizarValores(pcdAtualizado, updateDto);
         return PcdResponseDto.fromEntity(repository.save(pcdAtualizado));
@@ -91,7 +92,7 @@ public class PcdService {
     // DELETE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
-    public void removerPcd(String email) {
+    public void removerPcd(@Param("email") String email) {
         UsuarioPcd pcdRemovido = procurarPcdAtivo(email);
         pcdRemovido.setAtivo(false);
         formRepository.findByEmailAndAtivoTrue(email)

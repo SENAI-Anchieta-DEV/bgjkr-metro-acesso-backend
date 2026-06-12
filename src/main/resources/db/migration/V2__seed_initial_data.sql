@@ -20,7 +20,7 @@ INSERT INTO usuarios (id,
 VALUES ('u2f3a222-2222-2222-2222-222222222222',
         'João da Silva',
         'joao.silva@email.com',
-        'joao123',
+        'joao1234',
         'USUARIO_PCD',
         true);
 
