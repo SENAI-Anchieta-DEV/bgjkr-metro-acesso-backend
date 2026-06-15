@@ -13,6 +13,11 @@ public record EntradaRequestDto(
         @Size(max = 200)
         String codigoEstacao,
 
+        @Schema(description = "Código BSSID do roteador.", example = "A1:B2:C3:D4:E5:F6")
+        @NotBlank
+        @Size(max = 17)
+        String bssid,
+
         @Schema(description = "Identificação única da entrada.", example = "ENTRADA-100X")
         @NotBlank
         @Size(max = 200)
@@ -25,6 +30,7 @@ public record EntradaRequestDto(
                 .codigoEntrada(codigoEntrada)
                 .ativo(true)
                 .estacao(estacao)
+                .bssid(bssid)
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.EntradaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,12 @@ public class EntradaController {
                 .ok(service.listarEntradasAtivas());
     }
 
+    @GetMapping("/estacao/{codigoEstacao}")
+    public ResponseEntity<List<EntradaResponseDto>> listarEntradasPorEstacao(@PathVariable String codigoEstacao) {
+        return ResponseEntity
+                .ok(service.listarEntradasPorEstacao(codigoEstacao));
+    }
+
     @GetMapping("/{codigoEntrada}")
     public ResponseEntity<EntradaResponseDto> buscarEntradaAtiva(@PathVariable String codigoEntrada) {
         return ResponseEntity
@@ -47,9 +54,9 @@ public class EntradaController {
 
     // UPDATE
     @PutMapping("/{codigoEntrada}")
-    public ResponseEntity<EntradaResponseDto> atualizarEntrada(@PathVariable String codigoEntrada, @RequestBody @Valid EntradaRequestDto requestDto) {
+    public ResponseEntity<EntradaResponseDto> atualizarEntrada(@PathVariable String codigoEntrada, @RequestBody EntradaUpdateDto updateDto) {
         return ResponseEntity
-                .ok(service.atualizarEntrada(codigoEntrada, requestDto));
+                .ok(service.atualizarEntrada(codigoEntrada, updateDto));
     }
 
     // DELETE

@@ -1,11 +1,11 @@
 -- ========================
--- TAG
+-- TAG (PRECISA VIR ANTES)
 -- ========================
 INSERT INTO tags (id,
                   codigo_tag,
                   ativo)
-VALUES ('t1f3a111-1111-1111-1111-111111111111',
-        '1',
+VALUES ('tag-fisica-esp32',
+        'A4:CB:8F:20:F9:F4',
         true);
 
 -- ========================
@@ -18,24 +18,26 @@ INSERT INTO usuarios (id,
                       role,
                       ativo)
 VALUES ('u2f3a222-2222-2222-2222-222222222222',
-        'Pedro Henricky',
-        'pedro@gmail.com',
-        'pedro123',
+        'João da Silva',
+        'joao.silva@email.com',
+        'joao1234',
         'USUARIO_PCD',
         true);
 
 -- ========================
--- USUARIOS_PCD (TEM QUE VIR ANTES!)
+-- USUARIOS_PCD (DEPOIS DA TAG)
 -- ========================
 INSERT INTO usuarios_pcd (id,
                           deseja_suporte,
+                          comprovacao_id,
                           tag_id)
 VALUES ('u2f3a222-2222-2222-2222-222222222222',
         true,
-        't1f3a111-1111-1111-1111-111111111111');
+        'comprovacao_joao_da_silva',
+        'tag-fisica-esp32');
 
 -- ========================
--- PCD TIPOS (AGORA SIM)
+-- PCD TIPOS
 -- ========================
 INSERT INTO pcd_tipos_deficiencia (pcd_id,
                                    tipos_deficiencia)
@@ -90,21 +92,43 @@ INSERT INTO entradas (id,
                       codigo_entrada,
                       bssid,
                       ativo)
-VALUES ('30303030',
+VALUES ('celular-brayan123',
         'e3f3a333-3333-3333-3333-333333333333',
         '123321',
-        '34:AB:95:1F:2C:88',
+        '26:0B:02:11:73:3F',
         true);
 
 -- ========================
 -- ESTACAO_LINHAS
 -- ========================
-INSERT INTO estacao_linhas (estacao_id,
-                      linha)
-VALUES ('e3f3a333-3333-3333-3333-333333333333',
-        'AZUL');
+INSERT INTO estacao_linhas (estacao_id, linha)
+VALUES ('e3f3a333-3333-3333-3333-333333333333', 'AZUL');
 
-INSERT INTO estacao_linhas (estacao_id,
-                      linha)
-VALUES ('e3f3a333-3333-3333-3333-333333333333',
-        'VERMELHA');
+INSERT INTO estacao_linhas (estacao_id, linha)
+VALUES ('e3f3a333-3333-3333-3333-333333333333', 'VERMELHA');
+
+INSERT INTO formularios (id,
+                         nome,
+                         email,
+                         senha,
+                         deseja_suporte,
+                         motivo_reprovacao,
+                         administrador_id,
+                         status,
+                         comprovacao_id,
+                         ativo)
+VALUES ('f9a1c2d3-aaaa-bbbb-cccc-111122223333',
+        'Gabriela Santos',
+        'gabriela.santos@gmail.com',
+        'gabriela123',
+        false,
+        NULL,
+        NULL,
+        'EM_ANALISE',
+        'comprovacao_gabriela_santos',
+        true);
+
+INSERT INTO formularios_tipos_deficiencia (formulario_id,
+                                           tipo_deficiencia)
+VALUES ('f9a1c2d3-aaaa-bbbb-cccc-111122223333',
+        'VISUAL');

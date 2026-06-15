@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.agente_atendimento.AgenteUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AgenteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -99,8 +100,8 @@ public class AgenteController {
             }
     )
     @PutMapping("/{email}")
-    public ResponseEntity<AgenteResponseDto> atualizarAgente(@PathVariable String email, @RequestBody @Valid AgenteRequestDto requestDto) {
-        return ResponseEntity.ok(service.atualizarAgente(email, requestDto));
+    public ResponseEntity<AgenteResponseDto> atualizarAgente(@PathVariable String email, @RequestBody AgenteUpdateDto updateDto) {
+        return ResponseEntity.ok(service.atualizarAgente(email, updateDto));
     }
 
     @Operation(

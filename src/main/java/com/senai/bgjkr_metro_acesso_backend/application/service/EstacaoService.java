@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.application.service;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Linha;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
@@ -49,9 +50,9 @@ public class EstacaoService {
     // UPDATE
     @Transactional
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public EstacaoResponseDto atualizarEstacao(String codigoEstacao, EstacaoRequestDto requestDto) {
+    public EstacaoResponseDto atualizarEstacao(String codigoEstacao, EstacaoUpdateDto updateDto) {
         Estacao estacaoAtualizada = procurarEstacaoAtiva(codigoEstacao);
-        atualizarValores(estacaoAtualizada, requestDto);
+        atualizarValores(estacaoAtualizada, updateDto);
         return EstacaoResponseDto.fromEntity(repository.save(estacaoAtualizada));
     }
 
@@ -76,8 +77,12 @@ public class EstacaoService {
     }
 
     private Estacao reativarEstacao(Estacao estacao, EstacaoRequestDto requestDto) {
-        atualizarValores(estacao, requestDto);
         estacao.setAtivo(true);
+
+        estacao.setNome(requestDto.nome());
+        estacao.setCodigoEstacao(requestDto.codigoEstacao());
+        estacao.setLinhas(Linha.fromNumeros(requestDto.linhas()));
+
         return estacao;
     }
 
@@ -85,9 +90,12 @@ public class EstacaoService {
         return requestDto.toEntity();
     }
 
-    private void atualizarValores(Estacao estacao, EstacaoRequestDto requestDto) {
-        estacao.setNome(requestDto.nome());
-        estacao.setCodigoEstacao(requestDto.codigoEstacao());
-        estacao.setLinhas(Linha.fromNumeros(requestDto.linhas()));
+    private void atualizarValores(Estacao estacao, EstacaoUpdateDto updateDto) {
+        if (updateDto.nome() != null)
+            estacao.setNome(updateDto.nome());
+        if (updateDto.codigoEstacao() != null)
+            estacao.setCodigoEstacao(updateDto.codigoEstacao());
+        if (updateDto.linhas() != null)
+            estacao.setLinhas(Linha.fromNumeros(updateDto.linhas()));
     }
 }

@@ -6,6 +6,7 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
 public record EntradaResponseDto(
         String id,
         String codigoEntrada,
+        String bssid,
         EstacaoSummaryDto estacao
 ) {
     public static EntradaResponseDto fromEntity(
@@ -14,6 +15,7 @@ public record EntradaResponseDto(
         return new EntradaResponseDto(
                 entrada.getId(),
                 entrada.getCodigoEntrada(),
+                entrada.getBssid(),
                 entrada.getEstacao() == null ?
                         null :
                         EstacaoSummaryDto.fromEntity(entrada.getEstacao())

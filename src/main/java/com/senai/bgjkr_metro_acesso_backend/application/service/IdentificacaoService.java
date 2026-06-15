@@ -27,7 +27,6 @@ public class IdentificacaoService {
                 identificacao.codigoTag(),
                 codigoEstacao,
                 codigoEntrada,
-                identificacao.tipo(),
                 dataHora
         );
 

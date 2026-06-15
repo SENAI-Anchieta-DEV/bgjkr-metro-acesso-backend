@@ -1,0 +1,1 @@
+ALTER TABLE pendencias DROP COLUMN status_atendimento;

@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.tag_pcd.TagUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.TagService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -98,8 +99,8 @@ public class TagController {
             }
     )
     @PutMapping("/{codigoTag}")
-    public ResponseEntity<TagResponseDto> atualizarTag(@PathVariable String codigoTag, @RequestBody @Valid TagRequestDto requestDto) {
-        return ResponseEntity.ok(service.atualizarTag(codigoTag, requestDto));
+    public ResponseEntity<TagResponseDto> atualizarTag(@PathVariable String codigoTag, @RequestBody TagUpdateDto updateDto) {
+        return ResponseEntity.ok(service.atualizarTag(codigoTag, updateDto));
     }
 
     @Operation(
