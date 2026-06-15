@@ -58,15 +58,16 @@ class PendenciaServiceTest {
                 "1234",
                 "ESTACAO_01",
                 "ENTRADA_01",
-                true,
                 LocalDateTime.now()
         );
 
         TagPcd tagPcdMock = mock(TagPcd.class);
-        when(tagPcdMock.getUsuarioPcd()).thenReturn(mock(UsuarioPcd.class));
 
-        when(tagService.procurarTagAtiva(pendenciaRequestDto.codigoTag())).
-                thenReturn(mock(TagPcd.class));
+        when(tagService.procurarTagAtiva(pendenciaRequestDto.codigoTag()))
+                .thenReturn(tagPcdMock);
+
+        when(tagPcdMock.getUsuarioPcd())
+                .thenReturn(mock(UsuarioPcd.class));
 
         when(estacaoService.procurarEstacaoAtiva(pendenciaRequestDto.codigoEstacao()))
                 .thenReturn(mock(Estacao.class));
@@ -79,14 +80,13 @@ class PendenciaServiceTest {
 
         when(repository.save(any(PendenciaAtendimento.class)))
                 .thenAnswer(invocation -> invocation.<PendenciaAtendimento>getArgument(0));
-        ArgumentCaptor<PendenciaAtendimento> captor = ArgumentCaptor.forClass(PendenciaAtendimento.class);
 
         // ACT
         PendenciaResponseDto response = service.criarPendencia(pendenciaRequestDto);
 
         // ASSERT
         assertNotNull(response);
-        verify(tagService, times(1)).procurarTagAtiva(codigoTagId);
+        verify(tagService, times(1)).procurarTagAtiva("1234");
         verify(repository, times(1)).save(any(PendenciaAtendimento.class));
     }
 
@@ -99,24 +99,24 @@ class PendenciaServiceTest {
         AgenteAtendimento agente = new AgenteAtendimento();
 
         UsuarioPcd usuarioPcd = new UsuarioPcd();
+        usuarioPcd.setDesejaSuporte(true);
         usuarioPcd.setTag(tagPcd);
         tagPcd.setUsuarioPcd(usuarioPcd);
 
-        PendenciaRequestDto pendenciaRequestDto = new PendenciaRequestDto(
+        PendenciaRequestDto dto = new PendenciaRequestDto(
                 "1234",
                 "EST01",
                 "ENT01",
-                true,
                 LocalDateTime.parse("2026-05-29T12:00:00")
         );
 
-        when(tagService.procurarTagAtiva(pendenciaRequestDto.codigoTag())).
-                thenReturn(tagPcd);
+        when(tagService.procurarTagAtiva(dto.codigoTag()))
+                .thenReturn(tagPcd);
 
-        when(estacaoService.procurarEstacaoAtiva(pendenciaRequestDto.codigoEstacao()))
+        when(estacaoService.procurarEstacaoAtiva(dto.codigoEstacao()))
                 .thenReturn(mock(Estacao.class));
 
-        when(entradaService.procurarEntradaAtiva(pendenciaRequestDto.codigoEntrada()))
+        when(entradaService.procurarEntradaAtiva(dto.codigoEntrada()))
                 .thenReturn(mock(Entrada.class));
 
         when(agenteService.procurarAgentesDisponiveis(any(Estacao.class), any(LocalTime.class)))
@@ -127,7 +127,7 @@ class PendenciaServiceTest {
         ArgumentCaptor<PendenciaAtendimento> captor = ArgumentCaptor.forClass(PendenciaAtendimento.class);
 
         // ACT
-        service.criarPendencia(pendenciaRequestDto);
+        service.criarPendencia(dto);
 
         // ASSERT
         verify(repository).save(captor.capture());
@@ -150,7 +150,6 @@ class PendenciaServiceTest {
                 "1234",
                 "EST01",
                 "ENT01",
-                true,
                 LocalDateTime.parse("2026-05-29T12:00:00")
         );
 

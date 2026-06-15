@@ -6,11 +6,8 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendiment
 import com.senai.bgjkr_metro_acesso_backend.application.service.EntradaService;
 import com.senai.bgjkr_metro_acesso_backend.application.service.IdentificacaoService;
 import com.senai.bgjkr_metro_acesso_backend.application.service.PendenciaService;
-import com.senai.bgjkr_metro_acesso_backend.application.service.TagService;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Estacao;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.TagPcd;
-import com.senai.bgjkr_metro_acesso_backend.domain.entity.UsuarioPcd;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,12 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class IdentificacaoServiceTest {
@@ -45,8 +38,7 @@ class IdentificacaoServiceTest {
         // ARRANGE
         IdentificacaoDto dto = new IdentificacaoDto(
                 "TAG123",
-                "BSSID123",
-                true
+                "BSSID123"
         );
 
         Entrada entrada = mock(Entrada.class);
@@ -82,8 +74,7 @@ class IdentificacaoServiceTest {
         assertAll(
                 () -> assertEquals("TAG123", payload.codigoTag()),
                 () -> assertEquals("EST01", payload.codigoEstacao()),
-                () -> assertEquals("ENT01", payload.codigoEntrada()),
-                () -> assertTrue(payload.tipo())
+                () -> assertEquals("ENT01", payload.codigoEntrada())
         );
     }
 

@@ -32,8 +32,7 @@ class IdentificacaoControllerTest {
         // ARRANGE
         IdentificacaoDto dto = new IdentificacaoDto(
                 "1234",
-                "AA:BB:CC:DD:EE:FF",
-                true
+                "AA:BB:CC:DD:EE:FF"
         );
         PendenciaResponseDto responseEsperada = mock(PendenciaResponseDto.class);
 

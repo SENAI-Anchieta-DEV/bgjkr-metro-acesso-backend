@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -57,7 +56,6 @@ public class MqttSubscriberServiceTest {
 
         assertEquals("1234", dtoCapturado.codigoTag());
         assertEquals("AA:BB:CC:DD:EE:FF", dtoCapturado.bssid());
-        assertTrue(dtoCapturado.tipo());
 
         verify(service, times(1)).processMessage(payload);
     }
