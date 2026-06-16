@@ -26,12 +26,12 @@ public class MqttSubscriber {
 
     @PostConstruct
     public void init() {
-        try {
-            MqttClient client = new MqttClient(
+        try(
+                MqttClient client = new MqttClient(
                     "tcp://localhost:1883",
                     MqttClient.generateClientId()
-            );
-
+                )
+        ) {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);

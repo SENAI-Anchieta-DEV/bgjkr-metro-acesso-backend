@@ -99,12 +99,12 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             if (!response.isCommitted()) {
-                                System.out.println("authenticationEntryPoint: " + authException.getMessage() + " | URL: " + request.getRequestURI());
+                                System.out.printf("authenticationEntryPoint: %s | URL: %s\n", authException.getMessage(), request.getRequestURI());
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                             }
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            System.out.println("accessDeniedHandler: " + accessDeniedException.getMessage() + " | URL: " + request.getRequestURI());
+                            System.out.printf("accessDeniedHandler: %s | URL: %s\n", accessDeniedException.getMessage(), request.getRequestURI());
                             response.sendError(HttpServletResponse.SC_FORBIDDEN);
                         })
                 )
@@ -118,7 +118,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(corsProperties.getAllowedOrigins()); // Porta do seu React
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        System.out.println("CORS origens permitidas: " + corsProperties.getAllowedOrigins());
+        System.out.printf("CORS origens permitidas: %s\n", corsProperties.getAllowedOrigins());
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
