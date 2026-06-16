@@ -4,6 +4,7 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendiment
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.*;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,9 +19,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,13 +43,56 @@ class PendenciaServiceTest {
     @Mock
     private AgenteService agenteService;
 
+    // Instância criada manualmente para suportar injeção via construtor (testes de criação)
     private PendenciaService service;
+
+    // Entidades compartilhadas pelos testes de confirmação/remoção
+    private AgenteAtendimento agente;
+    private UsuarioPcd pcd;
+    private PendenciaAtendimento pendenciaAtiva;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         service = new PendenciaService(repository, estacaoService, tagService, entradaService, agenteService);
+
+        // Setup compartilhado para testes de confirmação/remoção
+        Estacao estacao = new Estacao();
+        estacao.setId("EST-A");
+
+        agente = new AgenteAtendimento();
+        agente.setId("AGT-01");
+        agente.setEmail("agente@equipea.com");
+        agente.setPendencias(new ArrayList<>());
+
+        Entrada entrada = new Entrada();
+        entrada.setId("ENT-01");
+        entrada.setPendencias(new ArrayList<>());
+
+        pcd = new UsuarioPcd();
+        pcd.setId("PCD-01");
+        pcd.setPendencias(new ArrayList<>());
+
+        pendenciaAtiva = PendenciaAtendimento.builder()
+                .id("PEND-001")
+                .agente(agente)
+                .estacao(estacao)
+                .entrada(entrada)
+                .pcdAtendido(pcd)
+                .dataHora(LocalDateTime.now())
+                .ativo(true)
+                .build();
+
+        agente.getPendencias().add(pendenciaAtiva);
+        pcd.getPendencias().add(pendenciaAtiva);
+        estacao.setPendencias(new ArrayList<>());
+        estacao.getPendencias().add(pendenciaAtiva);
+        entrada.getPendencias().add(pendenciaAtiva);
     }
+
+    // -------------------------------------------------------------------------
+    // Testes de criação de pendência
+    // -------------------------------------------------------------------------
 
     @Test
     @DisplayName("Deve encontrar código serial da tag no banco de dados e criar a pendência com sucesso")
@@ -96,7 +140,7 @@ class PendenciaServiceTest {
         // ARRANGE
         TagPcd tagPcd = new TagPcd();
         tagPcd.setCodigoTag("1234");
-        AgenteAtendimento agente = new AgenteAtendimento();
+        AgenteAtendimento agenteMock = new AgenteAtendimento();
 
         UsuarioPcd usuarioPcd = new UsuarioPcd();
         usuarioPcd.setDesejaSuporte(true);
@@ -120,10 +164,11 @@ class PendenciaServiceTest {
                 .thenReturn(mock(Entrada.class));
 
         when(agenteService.procurarAgentesDisponiveis(any(Estacao.class), any(LocalTime.class)))
-                .thenReturn(new ArrayList<>(List.of(agente)));
+                .thenReturn(new ArrayList<>(List.of(agenteMock)));
 
         when(repository.save(any(PendenciaAtendimento.class)))
                 .thenAnswer(invocation -> invocation.<PendenciaAtendimento>getArgument(0));
+
         ArgumentCaptor<PendenciaAtendimento> captor = ArgumentCaptor.forClass(PendenciaAtendimento.class);
 
         // ACT
@@ -142,9 +187,9 @@ class PendenciaServiceTest {
         TagPcd tagPcd = new TagPcd();
         tagPcd.setUsuarioPcd(new UsuarioPcd());
 
-        AgenteAtendimento agente = new AgenteAtendimento();
-        agente.setInicioTurno(LocalTime.parse("11:00:00"));
-        agente.setFimTurno(LocalTime.parse("18:00:00"));
+        AgenteAtendimento agenteMock = new AgenteAtendimento();
+        agenteMock.setInicioTurno(LocalTime.parse("11:00:00"));
+        agenteMock.setFimTurno(LocalTime.parse("18:00:00"));
 
         PendenciaRequestDto pendenciaRequestDto = new PendenciaRequestDto(
                 "1234",
@@ -153,8 +198,8 @@ class PendenciaServiceTest {
                 LocalDateTime.parse("2026-05-29T12:00:00")
         );
 
-        when(tagService.procurarTagAtiva(pendenciaRequestDto.codigoTag())).
-                thenReturn(tagPcd);
+        when(tagService.procurarTagAtiva(pendenciaRequestDto.codigoTag()))
+                .thenReturn(tagPcd);
 
         when(estacaoService.procurarEstacaoAtiva(pendenciaRequestDto.codigoEstacao()))
                 .thenReturn(mock(Estacao.class));
@@ -163,10 +208,11 @@ class PendenciaServiceTest {
                 .thenReturn(mock(Entrada.class));
 
         when(agenteService.procurarAgentesDisponiveis(any(Estacao.class), any(LocalTime.class)))
-                .thenReturn(new ArrayList<>(List.of(agente)));
+                .thenReturn(new ArrayList<>(List.of(agenteMock)));
 
         when(repository.save(any(PendenciaAtendimento.class)))
                 .thenAnswer(invocation -> invocation.<PendenciaAtendimento>getArgument(0));
+
         ArgumentCaptor<PendenciaAtendimento> captor = ArgumentCaptor.forClass(PendenciaAtendimento.class);
 
         // ACT
@@ -175,6 +221,77 @@ class PendenciaServiceTest {
         // ASSERT
         verify(repository).save(captor.capture());
         PendenciaAtendimento pendenciaCapturada = captor.getValue();
-        assertEquals(agente, pendenciaCapturada.getAgente());
+        assertEquals(agenteMock, pendenciaCapturada.getAgente());
+    }
+
+    // -------------------------------------------------------------------------
+    // Testes de confirmação e remoção de pendência
+    // -------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("CT-04 - Agente confirma atendimento: pendência é excluída do banco após confirmação")
+    void deveConfirmarAtendimento() {
+        // Arrange
+        when(repository.findById("PEND-001"))
+                .thenReturn(Optional.of(pendenciaAtiva));
+
+        // Act
+        service.removerPendencia("PEND-001");
+
+        // Assert
+        verify(repository, times(1)).findById("PEND-001");
+        verify(repository, times(1)).delete(pendenciaAtiva);
+    }
+
+    @Test
+    @DisplayName("CT-04 - Excluir pendência após confirmação")
+    void excluirPendenciaAposConfirmacao() {
+        // Arrange
+        when(repository.findById("PEND-001"))
+                .thenReturn(Optional.of(pendenciaAtiva));
+
+        // Act
+        service.removerPendencia("PEND-001");
+
+        // Assert
+        verify(repository, times(1)).delete(pendenciaAtiva);
+
+        assertNull(pendenciaAtiva.getAgente(),
+                "O vínculo com o agente deve ser removido antes da exclusão.");
+        assertNull(pendenciaAtiva.getPcdAtendido(),
+                "O vínculo com o PcD deve ser removido antes da exclusão.");
+        assertNull(pendenciaAtiva.getEstacao(),
+                "O vínculo com a estação deve ser removido antes da exclusão.");
+        assertNull(pendenciaAtiva.getEntrada(),
+                "O vínculo com a entrada deve ser removido antes da exclusão.");
+
+        assertFalse(agente.getPendencias().contains(pendenciaAtiva),
+                "A pendência deve ser removida da lista do agente.");
+        assertFalse(pcd.getPendencias().contains(pendenciaAtiva),
+                "A pendência deve ser removida da lista do PcD.");
+    }
+
+    @Test
+    @DisplayName("CT-04 - Tentativa de confirmar pendência inexistente lança EntidadeNaoEncontradaException")
+    void deveLancarExcecaoAoConfirmarPendenciaInexistente() {
+        // Arrange
+        when(repository.findById("ID-INVALIDO"))
+                .thenReturn(Optional.empty());
+
+        // Act
+        EntidadeNaoEncontradaException excecao = assertThrows(
+                EntidadeNaoEncontradaException.class,
+                () -> service.removerPendencia("ID-INVALIDO"),
+                "Deve lançar EntidadeNaoEncontradaException para pendência não encontrada."
+        );
+
+        // Assert
+        assertNotNull(excecao.getMessage(),
+                "A exceção deve conter mensagem descritiva.");
+        assertTrue(excecao.getMessage().contains("ID-INVALIDO"),
+                "A mensagem deve identificar o id que originou a falha.");
+
+        verify(repository, times(1)).findById("ID-INVALIDO");
+        verify(repository, never()).delete(any(PendenciaAtendimento.class));
     }
 }
