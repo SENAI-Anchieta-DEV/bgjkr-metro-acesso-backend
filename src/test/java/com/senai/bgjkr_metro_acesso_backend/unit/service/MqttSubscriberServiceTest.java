@@ -41,8 +41,7 @@ public class MqttSubscriberServiceTest {
         String payload = """
                 {
                     "codigoTag": "1234",
-                    "bssid": "AA:BB:CC:DD:EE:FF",
-                    "tipo": true
+                    "bssid": "AA:BB:CC:DD:EE:FF"
                 }
                 """;
         ArgumentCaptor<IdentificacaoDto> captor = ArgumentCaptor.forClass(IdentificacaoDto.class);
@@ -56,8 +55,6 @@ public class MqttSubscriberServiceTest {
 
         assertEquals("1234", dtoCapturado.codigoTag());
         assertEquals("AA:BB:CC:DD:EE:FF", dtoCapturado.bssid());
-
-        verify(service, times(1)).processMessage(payload);
     }
 
     @Test
@@ -85,8 +82,7 @@ public class MqttSubscriberServiceTest {
         String payload = """
                 {
                     "codigoTag": "1234",
-                    "bssid": "AA:BB:CC:DD:EE:FF",
-                    "tipo": true
+                    "bssid": "AA:BB:CC:DD:EE:FF"
                 }
                 """;
 

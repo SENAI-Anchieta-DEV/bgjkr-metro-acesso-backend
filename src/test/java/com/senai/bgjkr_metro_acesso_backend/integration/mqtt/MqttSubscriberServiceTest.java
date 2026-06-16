@@ -13,7 +13,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class MqttSubscriberServiceTest {
-
     @Test
     @DisplayName("Deve processar payload")
     void deveProcessarPayload() throws Exception {
@@ -25,8 +24,7 @@ class MqttSubscriberServiceTest {
         String payload = """
                 {
                     "codigoTag":"TAG123",
-                    "bssid":"BSSID123",
-                    "tipo":true
+                    "bssid":"BSSID123"
                 }
                 """;
 
@@ -48,8 +46,7 @@ class MqttSubscriberServiceTest {
         String payload = """
         {
             "codigoTag":"TAG123",
-            "bssid":"BSSID123",
-            "tipo":true
+            "bssid":"BSSID123"
         }
         """;
 
