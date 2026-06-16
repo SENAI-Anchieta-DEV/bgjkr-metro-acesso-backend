@@ -80,7 +80,7 @@ public class TagService {
                 .orElseThrow(TagIndisponivelException::new);
     }
 
-    protected TagPcd procurarTagAtiva(String codigoTag) {
+    public TagPcd procurarTagAtiva(String codigoTag) {
         return repository
                 .findByCodigoTagAndAtivoTrue(codigoTag)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("TagPcd", "codigoTag", codigoTag));

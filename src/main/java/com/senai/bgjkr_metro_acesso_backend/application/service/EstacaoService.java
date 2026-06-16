@@ -70,7 +70,7 @@ public class EstacaoService {
     }
 
     // Funções auxiliares
-    protected Estacao procurarEstacaoAtiva(String codigoEstacao) {
+    public Estacao procurarEstacaoAtiva(String codigoEstacao) {
         return repository
                 .findByCodigoEstacaoAndAtivoTrue(codigoEstacao)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Estacao", "codigoEstacao", codigoEstacao));

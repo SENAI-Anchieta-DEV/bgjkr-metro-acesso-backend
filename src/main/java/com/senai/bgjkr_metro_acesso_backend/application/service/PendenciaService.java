@@ -30,11 +30,6 @@ public class PendenciaService {
     public PendenciaResponseDto criarPendencia(PendenciaRequestDto dto) {
         TagPcd tag = tagService.procurarTagAtiva(dto.codigoTag());
         UsuarioPcd pcd = tag.getUsuarioPcd();
-
-        if(!pcd.isDesejaSuporte()){
-            return null;
-        }
-
         Estacao estacao = estacaoService.procurarEstacaoAtiva(dto.codigoEstacao());
         Entrada entrada = entradaService.procurarEntradaAtiva(dto.codigoEntrada());
         LocalDateTime dataHora = dto.dataHora();
@@ -42,9 +37,6 @@ public class PendenciaService {
 
         List<AgenteAtendimento> agentesDisponiveis = agenteService.procurarAgentesDisponiveis(estacao, horario);
         if (agentesDisponiveis.isEmpty()) {
-            System.out.println(horario);
-            System.out.println(agenteService.listarAgentesAtivos().getFirst().inicioTurno());
-            System.out.println(agenteService.listarAgentesAtivos().getFirst().fimTurno());
             throw new AgenteIndisponivelParaAtendimentoException();
         }
         Collections.shuffle(agentesDisponiveis);
@@ -118,7 +110,7 @@ public class PendenciaService {
         repository.delete(pendenciaRemovida);
     }
 
-    protected PendenciaAtendimento procurarPendenciaAtiva(String id) {
+    public PendenciaAtendimento procurarPendenciaAtiva(String id) {
         return repository
                 .findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("PendenciaAtendimento", "id", id));

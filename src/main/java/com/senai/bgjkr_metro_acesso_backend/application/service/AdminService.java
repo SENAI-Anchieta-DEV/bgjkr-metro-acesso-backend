@@ -67,7 +67,7 @@ public class AdminService {
     }
 
     // Funções auxiliares
-    protected Administrador procurarAdminAtivo(String email) {
+    public Administrador procurarAdminAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Administrador", "email", email));

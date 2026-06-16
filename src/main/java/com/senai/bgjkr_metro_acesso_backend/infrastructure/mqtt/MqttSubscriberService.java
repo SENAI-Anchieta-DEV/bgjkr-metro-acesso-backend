@@ -19,9 +19,9 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
-@Slf4j // log padronizado do lombok
-public class MqttSubscriber {
-    private final IdentificacaoService service;
+@Slf4j
+public class MqttSubscriberService {
+    private final IdentificacaoService identificacaoService;
     private final ObjectMapper objectMapper;
 
     @PostConstruct
@@ -40,37 +40,41 @@ public class MqttSubscriber {
 
             log.info("MQTT conectado");
 
-            client.subscribe("metro/tag/entrada", (topic, msg) -> {
+            client.subscribe("metro/tag/entrada", (_, msg) -> {
                 String payload = new String(msg.getPayload());
-
                 log.info("MQTT recebido: {}", payload);
 
                 try {
-                    IdentificacaoDto identificacao = objectMapper.readValue(payload, IdentificacaoDto.class);
-
-                    Authentication auth =
-                            new UsernamePasswordAuthenticationToken(
-                                    "mqtt-system",
-                                    null,
-                                    List.of(new SimpleGrantedAuthority(
-                                            "ROLE_ADMINISTRADOR"
-                                    ))
-                            );
-
-                    SecurityContextHolder.getContext()
-                            .setAuthentication(auth);
-
-                    service.solicitarPendencia(identificacao);
-                } catch (JsonProcessingException e) {
-                    log.error("Erro ao converter JSON MQTT", e);
+                    processMessage(payload);
                 } catch (Exception e) {
-                    log.error("Erro processando evento MQTT", e);
-                } finally {
-                    SecurityContextHolder.clearContext();
+                    log.error("Erro processando MQTT", e);
                 }
             });
+
         } catch (Exception e) {
             log.error("Erro ao iniciar MQTT", e);
         }
+    }
+
+    public void processMessage(String payload) throws JsonProcessingException {
+        IdentificacaoDto identificacaoDto = objectMapper.readValue(payload, IdentificacaoDto.class);
+        autenticarSolicitacao();
+
+        try {
+            identificacaoService.solicitarPendencia(identificacaoDto);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    public void autenticarSolicitacao(){
+        Authentication auth =
+                new UsernamePasswordAuthenticationToken(
+                        "mqtt-system",
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR"))
+                );
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 }

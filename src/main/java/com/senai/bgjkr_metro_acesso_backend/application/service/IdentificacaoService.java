@@ -18,9 +18,6 @@ public class IdentificacaoService {
 
     @Transactional
     public PendenciaResponseDto solicitarPendencia(IdentificacaoDto identificacao) {
-        System.out.println("Evento recebido no service:");
-        System.out.println(identificacao.codigoTag());
-
         Entrada entrada = entradaService.procurarEntradaPorBssid(identificacao.bssid());
         String codigoEstacao = entrada.getEstacao().getCodigoEstacao();
         String codigoEntrada = entrada.getCodigoEntrada();

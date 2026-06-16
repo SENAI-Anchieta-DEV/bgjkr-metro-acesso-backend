@@ -75,11 +75,11 @@ public class AgenteService {
     }
 
     // Funções auxiliares
-    protected List<AgenteAtendimento> procurarAgentesDisponiveis(Estacao estacao, LocalTime hora){
+    public List<AgenteAtendimento> procurarAgentesDisponiveis(Estacao estacao, LocalTime hora){
         return repository.findByEstacaoAndHorarioNoTurno(estacao, hora);
     }
 
-    protected AgenteAtendimento procurarAgenteAtivo(String email) {
+    public AgenteAtendimento procurarAgenteAtivo(String email) {
         return repository
                 .findByEmailAndAtivoTrue(email)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("AgenteAtendimento", "email", email));
