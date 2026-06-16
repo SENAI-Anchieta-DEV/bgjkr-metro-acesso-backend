@@ -1,25 +1,28 @@
 package com.senai.bgjkr_metro_acesso_backend.application.service;
 
+import com.senai.bgjkr_metro_acesso_backend.application.dto.comprovacao.ComprovacaoDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormAprovacaoRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormAprovacaoResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormSolicitacaoRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.formulario_pcd.FormSolicitacaoResponseDto;
-import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Administrador;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.FormularioPcd;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusFormulario;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
+import com.senai.bgjkr_metro_acesso_backend.domain.exception.auth.UsuarioNaoAutenticadoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.AlterarFormularioPcdJaValidadoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.ComprovacaoDeDeficienciaAusenteException;
-import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.FormularioPcdComEmailDeUsuarioAtivoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.LeituraDeComprovacaoDeDeficienciaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.MotivoReprovacaoAusenteException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.RegistroDeComprovacaoDeDeficienciaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.formulario.RemocaoDeFormularioDePcdAtivoException;
-import com.senai.bgjkr_metro_acesso_backend.domain.exception.auth.UsuarioNaoAutenticadoException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.FormularioRepository;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,12 +31,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +46,8 @@ public class FormularioService {
     private final FormularioRepository repository;
     private final UsuarioRepository usuarioRepository;
     private final AdminService adminService;
-    private final TagService tagService;
     private final PcdService pcdService;
+    private static final Path UPLOAD_PATH = Paths.get("upload");
 
     // CREATE
     @Transactional
@@ -76,7 +81,7 @@ public class FormularioService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
     public FormAprovacaoResponseDto buscarFormularioAtivo(String email) {
         return FormAprovacaoResponseDto.fromEntity(procurarFormularioAtivo(email));
     }
@@ -111,11 +116,76 @@ public class FormularioService {
         impedirFormularioJaValidado(formValidado);
         Administrador adminResponsavel = buscarAdministradorResponsavel();
         atualizarValidacao(formValidado, requestDto, adminResponsavel);
-        solicitarNovoPcdAprovado(email, formValidado, requestDto.aprovado());
+        solicitarNovoPcdAprovado(formValidado, requestDto.aprovado());
         return FormAprovacaoResponseDto.fromEntity(formValidado);
     }
 
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMINISTRADOR') or authentication.name == #email")
+    public ComprovacaoDto downloadComprovacao(String email) {
+        FormularioPcd formulario = procurarFormularioAtivo(email);
+        if (formulario.getComprovacaoId() == null) {
+            throw new EntidadeNaoEncontradaException("Comprovacao", "formulario", email);
+        }
+
+        return carregarComprovacao(formulario.getComprovacaoId());
+    }
+
     // Funções auxiliares
+    protected String salvarComprovacao(MultipartFile comprovacao) {
+        if (comprovacao == null || comprovacao.isEmpty()) {
+            throw new LeituraDeComprovacaoDeDeficienciaException();
+        }
+        try {
+            String originalFilename = comprovacao.getOriginalFilename();
+            String extensao = (originalFilename != null && originalFilename.contains("."))
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : "";
+
+            String comprovacaoId = UUID.randomUUID().toString();
+            Files.createDirectories(UPLOAD_PATH);
+            Path destino = UPLOAD_PATH.resolve(comprovacaoId + extensao);
+            Files.write(destino, comprovacao.getBytes());
+            return comprovacaoId;
+        } catch (IOException e) {
+            throw new RegistroDeComprovacaoDeDeficienciaException();
+        }
+    }
+
+    public ComprovacaoDto carregarComprovacao(String comprovacaoId) {
+        final Path filePath;
+
+        try (Stream<Path> paths = Files.list(UPLOAD_PATH)) {
+            filePath = paths
+                    .filter(p -> p.getFileName().toString().startsWith(comprovacaoId))
+                    .findFirst()
+                    .orElseThrow(LeituraDeComprovacaoDeDeficienciaException::new);
+        } catch (IOException e) {
+            throw new LeituraDeComprovacaoDeDeficienciaException();
+        }
+
+        final Resource resource;
+        try {
+            resource = new UrlResource(filePath.toUri());
+        } catch (MalformedURLException e) {
+            throw new LeituraDeComprovacaoDeDeficienciaException();
+        }
+
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new LeituraDeComprovacaoDeDeficienciaException();
+        }
+
+        final String contentType;
+        try {
+            contentType = Optional.ofNullable(Files.probeContentType(filePath))
+                    .orElse(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        } catch (IOException e) {
+            throw new LeituraDeComprovacaoDeDeficienciaException();
+        }
+
+        return new ComprovacaoDto(resource, contentType, comprovacaoId);
+    }
+
     protected void impedirEmailAtivo(String email) {
         if (usuarioRepository.existsByEmailAndAtivoTrue(email)) {
             throw new FormularioPcdComEmailDeUsuarioAtivoException();
@@ -185,26 +255,6 @@ public class FormularioService {
         formulario.setAdminResponsavel(adminResponsavel);
     }
 
-    private String salvarComprovacao(MultipartFile comprovacao) {
-        if (comprovacao == null || comprovacao.isEmpty()) {
-            throw new LeituraDeComprovacaoDeDeficienciaException();
-        }
-
-        String comprovacaoId;
-        Path uploadPath = Paths.get("upload");
-
-        try {
-            comprovacaoId = UUID.randomUUID().toString();
-            Files.createDirectories(uploadPath);
-            Path comprovacaoPath = uploadPath.resolve(comprovacaoId);
-            Files.write(comprovacaoPath, comprovacao.getBytes());
-        } catch (IOException e) {
-            throw new RegistroDeComprovacaoDeDeficienciaException();
-        }
-
-        return comprovacaoId;
-    }
-
     private Administrador buscarAdministradorResponsavel() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
@@ -213,16 +263,9 @@ public class FormularioService {
         return adminService.procurarAdminAtivo(auth.getName());
     }
 
-    private void solicitarNovoPcdAprovado(String email, FormularioPcd formulario, boolean aprovado) {
+    private void solicitarNovoPcdAprovado(FormularioPcd formulario, boolean aprovado) {
         if (aprovado) {
-            pcdService.registrarPcd(new PcdRequestDto(
-                    formulario.getNome(),
-                    email,
-                    formulario.getSenha(), // Senha já está criptografada!
-                    new HashSet<>(formulario.getTiposDeficiencia()),
-                    formulario.isDesejaSuporte(),
-                    tagService.escolherTagDisponivel().getCodigoTag()
-            ));
+            pcdService.criarPcdPorFormulario(formulario);
         }
     }
 }

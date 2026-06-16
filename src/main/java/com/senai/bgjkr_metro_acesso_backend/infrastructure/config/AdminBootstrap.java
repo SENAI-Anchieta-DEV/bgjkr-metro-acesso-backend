@@ -1,13 +1,11 @@
 package com.senai.bgjkr_metro_acesso_backend.infrastructure.config;
 
-
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.AdminRepository;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.Administrador;
 import com.senai.bgjkr_metro_acesso_backend.domain.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,7 +38,7 @@ public class AdminBootstrap implements CommandLineRunner {
                             .ativo(true)
                             .build();
                     adminRepository.save(admin);
-                    System.out.println("⚡ Usuário admin provisório criado: " + adminEmail);
+                    System.out.printf("⚡ Usuário admin provisório criado: %s", adminEmail);
                 }
         );
     }

@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.EstacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -99,8 +100,8 @@ public class EstacaoController {
             }
     )
     @PutMapping("/{codigo}")
-    public ResponseEntity<EstacaoResponseDto> atualizarEstacao(@PathVariable String codigo, @RequestBody @Valid EstacaoRequestDto requestDto) {
-        return ResponseEntity.ok(service.atualizarEstacao(codigo, requestDto));
+    public ResponseEntity<EstacaoResponseDto> atualizarEstacao(@PathVariable String codigo, @RequestBody EstacaoUpdateDto updateDto) {
+        return ResponseEntity.ok(service.atualizarEstacao(codigo, updateDto));
     }
 
     @Operation(

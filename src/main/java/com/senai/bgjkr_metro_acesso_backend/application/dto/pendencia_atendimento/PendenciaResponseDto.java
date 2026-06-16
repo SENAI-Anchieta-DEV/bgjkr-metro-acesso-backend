@@ -5,7 +5,6 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.entrada.EntradaSumma
 import com.senai.bgjkr_metro_acesso_backend.application.dto.estacao.EstacaoSummaryDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.usuario_pcd.PcdSummaryDto;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.PendenciaAtendimento;
-import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 
 import java.time.LocalDateTime;
 
@@ -15,8 +14,7 @@ public record PendenciaResponseDto(
         AgenteSummaryDto agente,
         EstacaoSummaryDto estacao,
         EntradaSummaryDto entrada,
-        LocalDateTime dataHora,
-        StatusAtendimento statusAtendimento
+        LocalDateTime dataHora
 ) {
     public static PendenciaResponseDto fromEntity(
             PendenciaAtendimento pendencia
@@ -27,8 +25,7 @@ public record PendenciaResponseDto(
                 AgenteSummaryDto.fromEntity(pendencia.getAgente()),
                 EstacaoSummaryDto.fromEntity(pendencia.getEstacao()),
                 EntradaSummaryDto.fromEntity(pendencia.getEntrada()),
-                pendencia.getDataHora(),
-                pendencia.getStatusAtendimento()
+                pendencia.getDataHora()
         );
     }
 }

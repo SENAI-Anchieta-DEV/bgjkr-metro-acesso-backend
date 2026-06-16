@@ -2,6 +2,7 @@ package com.senai.bgjkr_metro_acesso_backend.interface_ui.controller;
 
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminRequestDto;
 import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminResponseDto;
+import com.senai.bgjkr_metro_acesso_backend.application.dto.administrador.AdminUpdateDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.AdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -99,8 +100,8 @@ public class AdminController {
             }
     )
     @PutMapping("/{email}")
-    public ResponseEntity<AdminResponseDto> atualizarAdmin(@PathVariable String email, @RequestBody @Valid AdminRequestDto requestDto) {
-        return ResponseEntity.ok(service.atualizarAdmin(email, requestDto));
+    public ResponseEntity<AdminResponseDto> atualizarAdmin(@PathVariable String email, @RequestBody AdminUpdateDto updateDto) {
+        return ResponseEntity.ok(service.atualizarAdmin(email, updateDto));
     }
 
     @Operation(

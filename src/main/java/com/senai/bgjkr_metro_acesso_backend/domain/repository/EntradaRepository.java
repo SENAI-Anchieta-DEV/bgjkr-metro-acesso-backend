@@ -12,9 +12,11 @@ import java.util.Optional;
 public interface EntradaRepository extends JpaRepository<Entrada, String> {
     Optional<Entrada> findByCodigoEntrada(String codigoEntrada);
 
-    List<Entrada> findAllByEstacao(Estacao estacao);
+    List<Entrada> findAllByEstacaoAndAtivoTrue(Estacao estacao);
 
     Optional<Entrada> findByCodigoEntradaAndAtivoTrue(String codigoEntrada);
+
+    Optional<Entrada> findByBssidAndAtivoTrue(String bssid);
 
     List<Entrada> findAllByAtivoTrue();
 }

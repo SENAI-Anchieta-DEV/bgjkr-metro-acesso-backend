@@ -4,14 +4,16 @@ import com.senai.bgjkr_metro_acesso_backend.domain.entity.Entrada;
 
 public record EntradaSummaryDto(
         String id,
-        String codigoEntrada
+        String codigoEntrada,
+        String bssid
 ) {
     public static EntradaSummaryDto fromEntity(
             Entrada entrada
     ) {
         return new EntradaSummaryDto(
                 entrada.getId(),
-                entrada.getCodigoEntrada()
+                entrada.getCodigoEntrada(),
+                entrada.getBssid()
         );
     }
 }
