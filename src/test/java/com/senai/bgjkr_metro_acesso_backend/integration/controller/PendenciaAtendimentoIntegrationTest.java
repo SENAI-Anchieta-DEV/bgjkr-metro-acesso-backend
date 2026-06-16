@@ -60,7 +60,6 @@ class PendenciaAtendimentoIntegrationTest {
     private String tokenAgente;
 
     private final String emailAgente = "agente.atendimento@metroacesso.com";
-    private final String senhaAgente = "SenhaAgente123!";
     private String pendenciaId;
 
     @BeforeEach
@@ -92,6 +91,7 @@ class PendenciaAtendimentoIntegrationTest {
                 .build();
         entrada = entradaRepository.save(entrada);
 
+        String senhaAgente = "SenhaAgente123!";
         AgenteAtendimento agente = AgenteAtendimento.builder()
                 .nome("Agente Operacional Sé")
                 .email(emailAgente)
@@ -132,7 +132,6 @@ class PendenciaAtendimentoIntegrationTest {
                 .estacao(estacao)
                 .entrada(entrada)
                 .dataHora(LocalDateTime.now())
-                .statusAtendimento(StatusAtendimento.PENDENTE)
                 .ativo(true)
                 .build();
         pendencia = pendenciaRepository.save(pendencia);
@@ -179,9 +178,9 @@ class PendenciaAtendimentoIntegrationTest {
         given()
                 .header("Authorization", "Bearer " + tokenAgente)
                 .when()
-                .post("/api/pendencia-atendimento/" + pendenciaId + "/confirmar")
+                .delete("/api/pendencia-atendimento/" + pendenciaId)
                 .then()
-                .statusCode(200);
+                .statusCode(204);
 
         // THEN: O administrador realiza a limpeza técnica/exclusão da pendência finalizada
         given()

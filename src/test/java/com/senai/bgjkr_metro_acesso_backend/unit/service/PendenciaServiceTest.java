@@ -4,7 +4,6 @@ import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendiment
 import com.senai.bgjkr_metro_acesso_backend.application.dto.pendencia_atendimento.PendenciaResponseDto;
 import com.senai.bgjkr_metro_acesso_backend.application.service.*;
 import com.senai.bgjkr_metro_acesso_backend.domain.entity.*;
-import com.senai.bgjkr_metro_acesso_backend.domain.enums.StatusAtendimento;
 import com.senai.bgjkr_metro_acesso_backend.domain.exception.EntidadeNaoEncontradaException;
 import com.senai.bgjkr_metro_acesso_backend.domain.repository.PendenciaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,8 +48,6 @@ class PendenciaServiceTest {
 
     // Entidades compartilhadas pelos testes de confirmação/remoção
     private AgenteAtendimento agente;
-    private Estacao estacao;
-    private Entrada entrada;
     private UsuarioPcd pcd;
     private PendenciaAtendimento pendenciaAtiva;
 
@@ -60,7 +57,7 @@ class PendenciaServiceTest {
         service = new PendenciaService(repository, estacaoService, tagService, entradaService, agenteService);
 
         // Setup compartilhado para testes de confirmação/remoção
-        estacao = new Estacao();
+        Estacao estacao = new Estacao();
         estacao.setId("EST-A");
 
         agente = new AgenteAtendimento();
@@ -68,7 +65,7 @@ class PendenciaServiceTest {
         agente.setEmail("agente@equipea.com");
         agente.setPendencias(new ArrayList<>());
 
-        entrada = new Entrada();
+        Entrada entrada = new Entrada();
         entrada.setId("ENT-01");
         entrada.setPendencias(new ArrayList<>());
 
@@ -83,7 +80,6 @@ class PendenciaServiceTest {
                 .entrada(entrada)
                 .pcdAtendido(pcd)
                 .dataHora(LocalDateTime.now())
-                .statusAtendimento(StatusAtendimento.PENDENTE)
                 .ativo(true)
                 .build();
 
@@ -233,20 +229,18 @@ class PendenciaServiceTest {
     // -------------------------------------------------------------------------
 
     @Test
-    @DisplayName("CT-04 - Agente confirma atendimento: pendência é marcada como CONCLUIDO e excluída do banco após confirmação")
+    @DisplayName("CT-04 - Agente confirma atendimento: pendência é excluída do banco após confirmação")
     void deveConfirmarAtendimento() {
         // Arrange
         when(repository.findById("PEND-001"))
                 .thenReturn(Optional.of(pendenciaAtiva));
 
         // Act
-        service.confirmarAtendimento("PEND-001");
+        service.removerPendencia("PEND-001");
 
         // Assert
-        assertEquals(StatusAtendimento.CONCLUIDO, pendenciaAtiva.getStatusAtendimento(),
-                "Após confirmação, o status da pendência deve ser CONCLUIDO.");
-
         verify(repository, times(1)).findById("PEND-001");
+        verify(repository, times(1)).delete(pendenciaAtiva);
     }
 
     @Test
@@ -287,7 +281,7 @@ class PendenciaServiceTest {
         // Act
         EntidadeNaoEncontradaException excecao = assertThrows(
                 EntidadeNaoEncontradaException.class,
-                () -> service.confirmarAtendimento("ID-INVALIDO"),
+                () -> service.removerPendencia("ID-INVALIDO"),
                 "Deve lançar EntidadeNaoEncontradaException para pendência não encontrada."
         );
 
