@@ -26,10 +26,10 @@ public class MqttSubscriberService {
 
     @PostConstruct
     public void init() {
-        try (
+        try(
                 MqttClient client = new MqttClient(
-                        "tcp://localhost:1883",
-                        MqttClient.generateClientId()
+                    "tcp://localhost:1883",
+                    MqttClient.generateClientId()
                 )
         ) {
             MqttConnectOptions options = new MqttConnectOptions();

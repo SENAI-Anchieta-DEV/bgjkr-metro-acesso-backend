@@ -141,7 +141,7 @@ public class GlobalExceptionHandler {
             AccessDeniedException.class,
             AuthorizationDeniedException.class
     })
-    public ProblemDetail handleAcessoNegado(Exception ex, HttpServletRequest request) {
+    public ProblemDetail handleAcessoNegado(HttpServletRequest request) {
         return ProblemDetailUtils.buildProblem(
                 HttpStatus.FORBIDDEN,
                 "Acesso Negado",
